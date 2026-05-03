@@ -1,33 +1,30 @@
 plugins {
-    kotlin("jvm")
+    id("com.android.library")
+    kotlin("android")
+}
+
+android {
+    namespace = "com.tomasxs.qaatelier"
+    compileSdk = 34
+
+    defaultConfig {
+        minSdk = 26
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }
 
 dependencies {
-    implementation(project(":shared"))
-
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.3")
-    testImplementation("io.qameta.allure:allure-junit5:2.27.0")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
-
-tasks.test {
-    useJUnitPlatform()
-
-    // Pass -Dtags="smoke" from the command line to filter by tag
-    val tags = System.getProperty("tags")
-    if (tags != null) {
-        useJUnitPlatform {
-            includeTags(tags)
-        }
-    }
-
-    systemProperty(
-        "allure.results.directory",
-        layout.buildDirectory.dir("allure-results").get().asFile.absolutePath
-    )
-
-    // Print test names to console during the run
-    testLogging {
-        events("passed", "skipped", "failed")
-    }
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation("androidx.test:rules:1.5.1")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
 }
