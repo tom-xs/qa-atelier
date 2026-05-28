@@ -1,0 +1,41 @@
+name: Playwright E2E
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  schedule:
+    - cron: '0 6 * * 1-5'
+
+jobs:
+  playwright:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: web/playwright/package-lock.json
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('web/playwright/package-lock.json') }}
+      - run: npm ci
+        working-directory: web/playwright
+      - run: npx playwright install --with-deps
+        working-directory: web/playwright
+      - name: Run Playwright tests
+        run: npx playwright test
+        working-directory: web/playwright
+        env:
+          CI: true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: web/playwright/playwright-report/
+          retention-days: 30
