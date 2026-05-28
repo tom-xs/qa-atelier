@@ -20,6 +20,7 @@ __pycache__/
 .pytest_cache/
 
 # Android / Gradle
+.idea/
 android/.gradle/
 android/build/
 *.apk
