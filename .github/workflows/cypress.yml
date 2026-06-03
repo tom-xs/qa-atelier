@@ -22,17 +22,27 @@ jobs:
         with:
           node-version: 22
 
+      - name: Check for Cypress specs
+        id: check
+        run: |
+          COUNT=$(find web/cypress/e2e -name "*.cy.ts" | wc -l)
+          echo "count=$COUNT" >> $GITHUB_OUTPUT
+          echo "Found $COUNT spec files"
+
       - name: Enable corepack and activate yarn
+        if: steps.check.outputs.count > 0
         run: |
           corepack enable
           corepack prepare yarn@stable --activate
 
       - name: Install RWA dependencies
+        if: steps.check.outputs.count > 0
         run: |
           cd apps/rwa
           yarn install --legacy-peer-deps
 
       - name: Start RWA
+        if: steps.check.outputs.count > 0
         run: |
           cd apps/rwa
           yarn start &
@@ -41,6 +51,7 @@ jobs:
           PORT: 3000
 
       - name: Run Cypress
+        if: steps.check.outputs.count > 0
         uses: cypress-io/github-action@v6
         with:
           working-directory: web/cypress
@@ -50,8 +61,12 @@ jobs:
         env:
           CYPRESS_BASE_URL: http://localhost:3000
 
+      - name: No specs found
+        if: steps.check.outputs.count == 0
+        run: echo "No Cypress specs found yet, skipping."
+
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: failure() && steps.check.outputs.count > 0
         with:
           name: cypress-screenshots-${{ matrix.browser }}
           path: web/cypress/cypress/screenshots/
