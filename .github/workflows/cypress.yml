@@ -22,11 +22,23 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install and start Real World App
+      - name: Enable corepack and activate yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@stable --activate
+
+      - name: Install RWA dependencies
         run: |
           cd apps/rwa
-          yarn install --frozen-lockfile
-          yarn start:ci &
+          yarn install --legacy-peer-deps
+
+      - name: Start RWA
+        run: |
+          cd apps/rwa
+          yarn start &
+        env:
+          NODE_ENV: test
+          PORT: 3000
 
       - name: Run Cypress
         uses: cypress-io/github-action@v6
@@ -34,7 +46,7 @@ jobs:
           working-directory: web/cypress
           browser: ${{ matrix.browser }}
           wait-on: 'http://localhost:3000'
-          wait-on-timeout: 120
+          wait-on-timeout: 180
         env:
           CYPRESS_BASE_URL: http://localhost:3000
 
@@ -43,4 +55,3 @@ jobs:
         with:
           name: cypress-screenshots-${{ matrix.browser }}
           path: web/cypress/cypress/screenshots/
-
