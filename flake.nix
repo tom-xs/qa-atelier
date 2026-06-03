@@ -48,6 +48,9 @@
 
           packages = with pkgs; [
             nodejs_22
+            yarn # add yarn here
+            playwright-driver
+
             playwright-driver
             cypress
             pythonEnv
