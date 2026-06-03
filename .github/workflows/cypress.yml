@@ -17,23 +17,30 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Start Real World App
+
+      - name: Install and start Real World App
         run: |
           cd apps/rwa
-          npm install
-          npm run start:ci &
+          yarn install --frozen-lockfile
+          yarn start:ci &
+
       - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:
           working-directory: web/cypress
           browser: ${{ matrix.browser }}
           wait-on: 'http://localhost:3000'
-          wait-on-timeout: 60
+          wait-on-timeout: 120
+        env:
+          CYPRESS_BASE_URL: http://localhost:3000
+
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: cypress-screenshots-${{ matrix.browser }}
           path: web/cypress/cypress/screenshots/
+
