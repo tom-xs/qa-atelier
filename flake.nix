@@ -2,40 +2,64 @@
   description = "QA Atelier — Android & Web Test Automation";
 
   inputs = {
-    nixpkgs.url     = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils, ... }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+      ...
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         pkgs = import nixpkgs {
           inherit system;
-          config.allowUnfree = true;
+          config = {
+            allowUnfree = true;
+            android_sdk.accept_license = true;
+          };
         };
 
-        pythonEnv = pkgs.python3.withPackages (ps: with ps; [
-          selenium pytest requests
-        ]);
+        pythonEnv = pkgs.python3.withPackages (
+          ps: with ps; [
+            selenium
+            pytest
+            requests
+          ]
+        );
 
-        androidSdk = pkgs.androidenv.androidPkgs.androidsdk.override {
-          platformVersions    = [ "33" ];
-          abiVersions         = [ "x86_64" ];
-          includeEmulator     = true;
+        androidPkgs = pkgs.androidenv.composeAndroidPackages {
+          platformVersions = [ "33" ];
+          abiVersions = [ "x86_64" ];
+          includeEmulator = true;
           includeSystemImages = true;
-          includeNDK          = false;
+          includeNDK = false;
         };
-      in {
+
+        androidSdk = androidPkgs.androidsdk;
+      in
+      {
         devShells.default = pkgs.mkShell {
           name = "qa-atelier";
 
           packages = with pkgs; [
-            nodejs_22 nodePackages.npm
+            nodejs_22
             playwright-driver
             cypress
-            pythonEnv chromedriver chromium
-            jdk17 gradle android-tools androidSdk
-            git jq curl
+            pythonEnv
+            chromedriver
+            chromium
+            jdk17
+            gradle
+            android-tools
+            androidSdk
+            git
+            jq
+            curl
           ];
 
           shellHook = ''
