@@ -74,6 +74,12 @@
             export JAVA_HOME="${pkgs.jdk17}"
             export PATH="$ANDROID_HOME/platform-tools:$PATH"
 
+            if [ -f .env.local ]; then
+              set -a
+              . ./.env.local
+              set +a
+            fi
+
             echo ""
             echo "  QA Atelier devShell ready"
             echo "  node $(node -v) | python $(python --version) | java $(java -version 2>&1 | head -1)"
