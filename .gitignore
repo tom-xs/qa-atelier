@@ -11,8 +11,8 @@ web/playwright/playwright-report/
 web/playwright/test-results/
 
 # Cypress
-web/cypress/cypress/videos/
-web/cypress/cypress/screenshots/
+web/cypress/videos/
+web/cypress/screenshots/
 
 # Python
 __pycache__/
