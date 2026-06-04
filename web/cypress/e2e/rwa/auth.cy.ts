@@ -3,14 +3,27 @@ import { RwaLoginPage } from "../../pages/rwa/RwaLoginPage";
 describe("RWA — Authentication", () => {
   const loginPage = new RwaLoginPage();
 
+  const getCredentials = () => {
+    const username = Cypress.env("RWA_USER");
+    const password = Cypress.env("RWA_PASS");
+
+    if (typeof username !== "string" || username.length === 0) {
+      throw new Error("CYPRESS_RWA_USER is required to run RWA auth tests.");
+    }
+    if (typeof password !== "string" || password.length === 0) {
+      throw new Error("CYPRESS_RWA_PASS is required to run RWA auth tests.");
+    }
+
+    return { username, password };
+  };
+
   beforeEach(() => {
     loginPage.visit();
   });
 
   it("logs in successfully with valid credentials", () => {
     // Arrange
-    const username = "Heath93";
-    const password = "REDACTED";
+    const { username, password } = getCredentials();
 
     // Act
     loginPage.login(username, password);
@@ -22,7 +35,8 @@ describe("RWA — Authentication", () => {
 
   it("shows an error for an incorrect password", () => {
     // Act
-    loginPage.login("Heath93", "wrongpassword");
+    const { username } = getCredentials();
+    loginPage.login(username, "wrongpassword");
 
     // Assert
     cy.getBySel("signin-error").should("be.visible");

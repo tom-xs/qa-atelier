@@ -60,6 +60,8 @@ jobs:
           wait-on-timeout: 180
         env:
           CYPRESS_BASE_URL: http://localhost:3000
+          CYPRESS_RWA_USER: ${{ secrets.RWA_USER }}
+          CYPRESS_RWA_PASS: ${{ secrets.RWA_PASS }}
 
       - name: No specs found
         if: steps.check.outputs.count == 0
