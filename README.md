@@ -25,3 +25,5 @@ make test-selenium
 make test-android
 make test-all
 ```
+
+For Cypress RWA auth specs, set `CYPRESS_RWA_USER` and `CYPRESS_RWA_PASS` in your environment (or CI secrets).
