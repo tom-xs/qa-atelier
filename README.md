@@ -3,10 +3,10 @@
 A personal practice workspace for Android and web UI automation.
 
 ## Frameworks
-- **Playwright** (TypeScript) — web E2E, Spotify & Airbnb web
+- **Playwright** (TypeScript) — web E2E
 - **Cypress** — Cypress Real World App (submodule at `apps/rwa`)
-- **Selenium** (Python) — cross-browser, Airbnb & Spotify web
-- **UIAutomator** (Kotlin) — Android native, Spotify & Airbnb Android
+- **Selenium** (Python) — cross-browser web
+- **UIAutomator** (Kotlin) — Android native
 
 ## Setup (NixOS / Home Manager)
 
