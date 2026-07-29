@@ -1,12 +1,13 @@
 # QA Atelier
 
-A personal practice workspace for Android and web UI automation.
+A personal practice workspace for Android, web, and API test automation.
 
 ## Frameworks
 - **Playwright** (TypeScript) — web E2E
 - **Cypress** — Cypress Real World App (submodule at `apps/rwa`)
 - **Selenium** (Python) — cross-browser web
 - **UIAutomator** (Kotlin) — Android native
+- **Postman / Newman + Vitest** — REST API contract tests (`api/`)
 
 ## Setup (NixOS / Home Manager)
 
@@ -16,6 +17,9 @@ cd qa-atelier
 nix develop        # or: direnv allow
 ```
 
+Each framework folder is self-contained with its own lockfile — install
+inside the folder you're working on (e.g. `cd web/playwright && npm install`).
+
 ## Running tests
 
 ```bash
@@ -23,6 +27,7 @@ make test-playwright
 make test-cypress
 make test-selenium
 make test-android
+make test-api
 make test-all
 ```
 
