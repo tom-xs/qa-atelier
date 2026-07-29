@@ -1,0 +1,16 @@
+{
+  "name": "qa-atelier-api",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Postman/Newman collections and programmatic API tests",
+  "scripts": {
+    "test": "vitest run --passWithNoTests",
+    "test:newman": "bash newman/run-all.sh"
+  },
+  "devDependencies": {
+    "newman": "^6.2.1",
+    "newman-reporter-htmlextra": "^1.23.1",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.9"
+  }
+}
