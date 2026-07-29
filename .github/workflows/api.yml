@@ -1,47 +1,59 @@
 name: API Tests
+
 on:
   push:
     branches: [master]
-  paths: ['api/**', 'apps/rwa/**']
+    paths: ['api/**', 'apps/rwa/**']
   pull_request:
     branches: [master]
 
 jobs:
   api-tests:
     runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: recursive
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 22
-    - name: Enable corepack and activate yarn
-      run: corepack enable && corepack prepare yarn@stable --activate
-    - name: Start RWA (API server on port 3001)
-      run: |
-        cd apps/rwa
-        yarn install --legacy-peer-deps
-        yarn start &
-      env:
-        NODE_ENV: test
-    - name: Install Newman
-      run: npm install -g newman newman-reporter-htmlextra
-    - name: Run Postman collections
-      run: bash api/newman/run-all.sh
-      env:
-        RWA_PASS: ${{ secrets.RWA_PASS }}
-    - name: Run programmatic API tests
-      run: |
-        cd api
-        npm ci
-        npm test
-      env:
-        RWA_USER: ${{ secrets.RWA_USER }}
-      RWA_PASS: ${{ secrets.RWA_PASS }}
-    - uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: api-test-reports
-      path: api/reports/
-      retention-days: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable corepack and activate yarn
+        run: corepack enable && corepack prepare yarn@stable --activate
+
+      - name: Start RWA (API server on port 3001)
+        run: |
+          cd apps/rwa
+          yarn install --legacy-peer-deps
+          yarn start &
+        env:
+          NODE_ENV: test
+
+      - name: Wait for RWA API
+        run: |
+          echo "Waiting for http://localhost:3001 ..."
+          timeout 180 bash -c 'until curl -s -o /dev/null http://localhost:3001; do sleep 2; done'
+
+      - name: Install API test dependencies
+        run: npm ci
+        working-directory: api
+
+      - name: Run Postman collections
+        run: bash api/newman/run-all.sh
+        env:
+          RWA_PASS: ${{ secrets.RWA_PASS }}
+
+      - name: Run programmatic API tests
+        run: npm test
+        working-directory: api
+        env:
+          RWA_USER: ${{ secrets.RWA_USER }}
+          RWA_PASS: ${{ secrets.RWA_PASS }}
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-test-reports
+          path: api/reports/
+          retention-days: 30
