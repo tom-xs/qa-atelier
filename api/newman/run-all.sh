@@ -13,6 +13,15 @@ if [ ${#collections[@]} -eq 0 ]; then
   exit 0
 fi
 
+# Prefer the pinned Newman from api/package.json (run from repo root, so npx
+# would miss api/node_modules and silently download an unpinned version).
+# Fall back to PATH, which covers the nix devShell's nodePackages.newman.
+if [ -x api/node_modules/.bin/newman ]; then
+  NEWMAN="api/node_modules/.bin/newman"
+else
+  NEWMAN="newman"
+fi
+
 env_args=()
 if [ -f "$ENV_FILE" ]; then
   env_args+=(--environment "$ENV_FILE")
@@ -26,7 +35,7 @@ mkdir -p api/reports
 for collection in "${collections[@]}"; do
   name=$(basename "$collection" .postman_collection.json)
   echo "Running: $collection"
-  npx newman run "$collection" \
+  "$NEWMAN" run "$collection" \
     "${env_args[@]}" \
     --reporters cli,junit \
     --reporter-junit-export "api/reports/${name}.xml"
