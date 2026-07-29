@@ -1,9 +1,12 @@
 import { describe, test, expect } from 'vitest';
 import { login } from '../helpers/apiClient';
 
-const BASE_URL = process.env.API_URL ?? 'http://localhost:3001';
-const USER = process.env.RWA_USER ?? 'Heath93';
-const PASS = process.env.RWA_PASS ?? 's3cret';
+// NOTE: use `||` not `??` for env-var fallbacks.
+// In CI, a missing GitHub Secret expands to an EMPTY STRING (not undefined),
+// so `process.env.RWA_USER ?? 'Heath93'` would yield '' and login would 401.
+const BASE_URL = process.env.API_URL || 'http://localhost:3001';
+const USER = process.env.RWA_USER || 'Heath93';
+const PASS = process.env.RWA_PASS || 's3cret';
 
 describe('RWA API — Auth', () => {
   test('POST /login returns token for valid credentials', async () => {
