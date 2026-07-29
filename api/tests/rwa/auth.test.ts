@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { login } from '../helpers/apiClient';
+import { login, authHeaders } from '../helpers/apiClient';
 
 // NOTE: use `||` not `??` for env-var fallbacks.
 // In CI, a missing GitHub Secret expands to an EMPTY STRING (not undefined),
@@ -9,14 +9,16 @@ const USER = process.env.RWA_USER || 'Heath93';
 const PASS = process.env.RWA_PASS || 's3cret';
 
 describe('RWA API — Auth', () => {
-  test('POST /login returns token for valid credentials', async () => {
+  test('POST /login returns the user and a session cookie', async () => {
     // Arrange + Act
-    const body = await login(USER, PASS);
+    const session = await login(USER, PASS);
 
-    // Assert
-    expect(typeof body.token).toBe('string');
-    expect(body.token.length).toBeGreaterThan(0);
-    expect(typeof body.user.id).toBe('string');
+    // Assert — RWA answers with the user object and a connect.sid
+    // session cookie (no JWT/bearer token; see apps/rwa/backend/auth.ts)
+    expect(typeof session.user.id).toBe('string');
+    expect(session.user.id.length).toBeGreaterThan(0);
+    expect(session.user.username).toBe(USER);
+    expect(session.cookie).toMatch(/^connect\.sid=/);
   });
 
   test('POST /login returns 401 for wrong password', async () => {
@@ -29,5 +31,20 @@ describe('RWA API — Auth', () => {
 
     // Assert
     expect(res.status).toBe(401);
+  });
+
+  test('session cookie grants access to protected endpoints', async () => {
+    // Arrange
+    const session = await login(USER, PASS);
+
+    // Act
+    const authed = await fetch(`${BASE_URL}/users`, {
+      headers: authHeaders(session.cookie),
+    });
+    const anonymous = await fetch(`${BASE_URL}/users`);
+
+    // Assert
+    expect(authed.status).toBe(200);
+    expect(anonymous.status).toBe(401);
   });
 });
