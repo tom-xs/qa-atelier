@@ -1,12 +1,9 @@
 {
   "name": "qa-atelier",
   "private": true,
-  "workspaces": [
-    "web/playwright",
-    "web/cypress"
-  ],
   "scripts": {
-    "test:playwright": "npm run test --workspace=web/playwright",
-    "test:cypress": "npm run test --workspace=web/cypress"
+    "test:playwright": "npm --prefix web/playwright test",
+    "test:cypress": "npm --prefix web/cypress test",
+    "test:api": "npm --prefix api test"
   }
 }
