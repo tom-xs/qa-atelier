@@ -1,3 +1,5 @@
+import { RWAHomePage } from "./RwaHomePage";
+
 export class RwaLoginPage {
   visit() {
     cy.visit("/");
@@ -20,5 +22,6 @@ export class RwaLoginPage {
     this.enterUsername(username);
     this.enterPassword(password);
     this.submit();
+    return new RWAHomePage();
   }
 }
