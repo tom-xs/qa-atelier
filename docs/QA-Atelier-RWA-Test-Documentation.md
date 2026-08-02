@@ -64,8 +64,10 @@ Test cases are managed as GitHub Issues using the `type: test-case` label and th
 | TC-001 | Log in with valid credentials (UI) | REQ-AUTH-001 | Smoke | P0 | Cypress | Retired — covered by API tests |
 | TC-002 | Create a payment transaction | REQ-TX-001 | Functional | P1 | Cypress | Documented (issue #6) |
 | TC-003 | Request money from another user | REQ-TX-002 | Functional | P1 | Cypress | Documented (issue #7) |
-| TC-004 | User cannot log in with invalid credentials | REQ-AUTH-002 | Smoke / Negative | P0 | Cypress | Documented (issue #8) |
+| TC-004 | User cannot log in with invalid credentials | REQ-AUTH-002 | Smoke / Negative | P0 | Cypress | Partially automated (issue #8 — error-message check in `auth.cy.ts`) |
 | TC-005 | RWA API auth collection + CI environment | REQ-AUTH-001, REQ-AUTH-002 | API Contract | P1 | Postman / Newman | Documented (issue #12) |
+| TC-021 | Client-side login validation blocks empty submission | REQ-AUTH-001, REQ-AUTH-002 | Functional | P2 | Cypress | Automated (issue #31, `web/cypress/e2e/rwa/auth.cy.ts`) |
+| TC-022 | Log in with valid credentials via the UI | REQ-AUTH-001 | Smoke | P1 | Cypress | Automated (issue #30, `web/cypress/e2e/rwa/auth.cy.ts`) |
 | — | API: login returns user + session cookie; 401 on bad password; cookie grants `/users` | REQ-AUTH-001, REQ-AUTH-002, REQ-AUTH-005 | API Contract | P0 | Vitest | Automated (`api/tests/rwa/auth.test.ts`) |
 
 ## 3.2 Planned test cases
@@ -96,8 +98,8 @@ Coverage key: **A** = automated (passing spec in CI), **D** = documented (issue 
 
 | Requirement | Test cases | Coverage | Gap / next action |
 |---|---|---|---|
-| REQ-AUTH-001 | TC-001 (retired), TC-005, Vitest auth suite | **A** | Automate TC-005 collection |
-| REQ-AUTH-002 | TC-004, TC-005, Vitest auth suite | **A** | Automate TC-004 in Cypress (UI error message) |
+| REQ-AUTH-001 | TC-001 (retired), TC-005, TC-022, Vitest auth suite | **A** | Automate TC-005 collection |
+| REQ-AUTH-002 | TC-004, TC-005, TC-021, Vitest auth suite | **A** | Finish TC-004 UI assertions (stays on /signin, no cookie stored) |
 | REQ-AUTH-003 | TC-006 | P | Write Cypress spec |
 | REQ-AUTH-004 | TC-007 | P | Write Cypress spec |
 | REQ-AUTH-005 | TC-008, Vitest auth suite (cookie reuse) | **A** (API level) | UI-level check in TC-008 |
@@ -116,7 +118,7 @@ Coverage key: **A** = automated (passing spec in CI), **D** = documented (issue 
 | REQ-NOTIF-001 | TC-016 | P | Write Cypress spec |
 | REQ-NOTIF-002 | — | — | Add test case (P2) |
 
-**Coverage summary (2026-07-30):** 18 requirements — 3 with automated coverage, 4 documented, 9 planned, 3 with no test case yet (all P2). Rule: no requirement ships to "Done" with an **—** in this matrix; P0/P1 rows must reach **A** before the project is considered complete.
+**Coverage summary (2026-08-02):** 19 requirements — 3 with automated coverage, 2 documented, 11 planned, 3 with no test case yet (all P2). TC-021 and TC-022 were raised retroactively to trace auth UI tests already coded in `web/cypress/e2e/rwa/auth.cy.ts`. Rule: no requirement ships to "Done" with an **—** in this matrix; P0/P1 rows must reach **A** before the project is considered complete.
 
 # 5. Environment Setup
 
@@ -158,7 +160,7 @@ State management: `yarn start` = reset to seed; `yarn start:empty` = empty datab
 1. Add `postman` to the devShell packages in `flake.nix` (unfree is already allowed) and re-enter `nix develop`; or run ad hoc: `NIXPKGS_ALLOW_UNFREE=1 nix shell --impure nixpkgs#postman`.
 2. Sign in with a free account (collections and environments require it; the offline lightweight client does not have them). Create a **private personal workspace**. Do **not** connect the workspace to a local folder (Native Git) — that feature stores Postman's own YAML tree and conflicts with the repo layout.
 3. Optional: disable Agent Mode in Settings so the "New" button stops offering AI setup.
-4. Build the `RWA Auth` collection: `POST {{baseUrl}}/login` (valid + bad password), `GET {{baseUrl}}/users`, `GET {{baseUrl}}/users/{{userId}}` — assertions per issue #12 (status, `user` object, `connect.sid` cookie via `pm.cookies.has`, response time under 500 ms, chain `userId` into the environment).
+4. Build the `RWA Auth` collection: `POST {{baseUrl}}/login` (valid + bad password), `GET {{baseUrl}}/users`, `GET {{baseUrl}}/users/{{userId}}` — assertions per issue #12 (status, `user` object, `connect.sid` cookie via `pm.cookies.has`, chain `userId` into the environment). The login response-time budget is not asserted here — it is owned by TC-020.
 5. Create environment **CI**: `baseUrl=http://localhost:3001`, `username=Heath93`, `password` with initial value `{{RWA_PASS}}` and current value `s3cret`, empty `userId`. Only initial values are exported — the real password never leaves the machine.
 6. Export: collection (v2.1) to `api/collections/rwa-auth.postman_collection.json`; environment to `api/environments/ci.postman_environment.json`. Verify with `jq` that no real password is in the exported files.
 
