@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>QA Atelier — RWA Test Project Documentation</title>
+<style>
+body { margin: 0; padding: 0; string-set: doctitle ""; }
+h1 { string-set: doctitle content(); }
+
+@page {
+  size: A4;
+  margin: 2.5cm 2cm;
+  @top-center { content: string(doctitle); font-size: 8.5pt; color: #666; }
+  @bottom-center { content: counter(page); font-size: 9pt; color: #666; }
+}
+@page :first { margin: 0; @top-center { content: none; } @bottom-center { content: none; } }
+@page toc { @top-center { content: none; } }
+
+/* ---------- Cover (Swiss style) ---------- */
+.cover {
+  width: 210mm; height: 297mm; margin: 0; position: relative;
+  overflow: hidden; page-break-after: always; background: #fdfdfd;
+}
+.cover .grid-line-v { position: absolute; top: 0; bottom: 0; width: 0.4pt; background: #d8d8d8; }
+.cover .accent-bar { position: absolute; left: 0; width: 100%; height: 6mm; background: #2f4f4f; }
+.cover .corner-block { position: absolute; width: 22mm; height: 22mm; background: #2f4f4f; }
+.cover-content { position: absolute; top: 42%; left: 12%; width: 76%; }
+.cover-kicker { font-family: Helvetica, Arial, sans-serif; font-size: 10pt; letter-spacing: 3px; color: #2f4f4f; text-transform: uppercase; margin-bottom: 8mm; }
+.cover-title { font-family: Helvetica, Arial, sans-serif; font-size: 30pt; font-weight: 700; color: #1a1a1a; line-height: 1.15; margin: 0 0 6mm 0; }
+.cover-subtitle { font-size: 13pt; color: #555; margin-bottom: 18mm; }
+.cover-rule { width: 34mm; height: 1.2pt; background: #2f4f4f; margin-bottom: 8mm; }
+.cover-meta { font-size: 11pt; color: #333; line-height: 1.9; font-family: Helvetica, Arial, sans-serif; }
+.cover-meta .label { color: #888; display: inline-block; width: 30mm; }
+
+/* ---------- TOC ---------- */
+.toc-page { page: toc; page-break-after: always; }
+.toc-title { font-family: Helvetica, Arial, sans-serif; font-size: 18pt; font-weight: 700; color: #1a1a1a; border-bottom: 2pt solid #2f4f4f; padding-bottom: 2mm; margin-bottom: 6mm; }
+nav#TOC { font-size: 10pt; }
+nav#TOC ul { list-style: none; padding-left: 0; margin: 0; }
+nav#TOC ul ul { padding-left: 6mm; font-size: 9pt; color: #555; }
+nav#TOC li { margin: 0.8mm 0; }
+nav#TOC li a { display: flex; justify-content: space-between; }
+nav#TOC a { color: #1a1a1a; text-decoration: none; }
+nav#TOC > ul > li > a { font-weight: 600; }
+nav#TOC a::after { content: target-counter(attr(href url), page); font-weight: normal; color: #666; margin-left: 4mm; }
+
+/* ---------- Body ---------- */
+body { font-family: Georgia, "Times New Roman", serif; font-size: 10.5pt; line-height: 1.55; color: #333; text-align: justify; text-align-last: left; }
+h1 { font-family: Helvetica, Arial, sans-serif; font-size: 16pt; color: #1a1a1a; border-bottom: 1.5pt solid #2f4f4f; padding-bottom: 1.5mm; margin: 9mm 0 4mm 0; page-break-after: avoid; }
+h2 { font-family: Helvetica, Arial, sans-serif; font-size: 12.5pt; color: #2f4f4f; margin: 6mm 0 2.5mm 0; page-break-after: avoid; }
+h3 { font-family: Helvetica, Arial, sans-serif; font-size: 11pt; color: #333; margin: 4mm 0 2mm 0; page-break-after: avoid; }
+p { margin: 0 0 2.8mm 0; orphans: 2; widows: 2; }
+strong { color: #1a1a1a; }
+
+/* Three-line tables */
+table { border-collapse: collapse; width: 100%; max-width: 100%; margin: 3mm 0 5mm 0; font-size: 9pt; font-family: Helvetica, Arial, sans-serif; overflow-x: auto; }
+thead { display: table-header-group; }
+thead th { border-top: 1.6pt solid #333; border-bottom: 1pt solid #333; text-align: left; padding: 1.6mm 2mm; font-weight: 700; color: #1a1a1a; }
+tbody td { border-bottom: 0.4pt solid #bbb; padding: 1.4mm 2mm; vertical-align: top; }
+tbody tr:last-child td { border-bottom: 1.6pt solid #333; }
+tr { page-break-inside: avoid; }
+
+/* Code */
+code { font-family: "DejaVu Sans Mono", monospace; font-size: 8.5pt; background: #f5f5f5; padding: 0.2mm 1mm; word-break: break-word; }
+pre { background: #f5f5f5; border-left: 2pt solid #2f4f4f; padding: 2.5mm 3mm; font-size: 8.5pt; max-width: 100%; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; page-break-inside: avoid; }
+pre code { background: none; padding: 0; }
+
+ul, ol { margin: 1mm 0 3mm 0; padding-left: 6mm; }
+li { margin-bottom: 1.2mm; }
+a { color: #2f4f4f; word-break: break-all; }
+blockquote { border-left: 2pt solid #999; margin: 3mm 0; padding-left: 4mm; color: #555; max-width: 100%; }
+hr { border: none; border-top: 0.5pt solid #ccc; margin: 5mm 0; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="grid-line-v" style="left: 12%;"></div>
+  <div class="grid-line-v" style="left: 88%;"></div>
+  <div class="accent-bar" style="top: 24mm;"></div>
+  <div class="corner-block" style="right: 0; bottom: 0;"></div>
+  <div class="cover-content">
+    <div class="cover-kicker">$docpart$</div>
+    <div class="cover-title">$title$</div>
+    <div class="cover-subtitle">$subtitle$</div>
+    <div class="cover-rule"></div>
+    <div class="cover-meta">
+      <div><span class="label">Author</span> Tomas Xavier Santos</div>
+      <div><span class="label">Project</span> QA Atelier (tom-xs/qa-atelier)</div>
+      <div><span class="label">AUT</span> Cypress Real World App</div>
+      <div><span class="label">Date</span> 2026-07-30</div>
+      <div><span class="label">Version</span> 1.0</div>
+    </div>
+  </div>
+</div>
+
+<div class="toc-page">
+  <div class="toc-title">Contents</div>
+  <nav id="TOC">
+  $toc$
+  </nav>
+</div>
+
+$body$
+
+</body>
+</html>
