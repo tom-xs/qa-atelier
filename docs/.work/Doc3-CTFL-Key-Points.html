@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>QA Atelier — RWA Test Project Documentation</title>
+<style>
+body { margin: 0; padding: 0; string-set: doctitle ""; }
+h1 { string-set: doctitle content(); }
+
+@page {
+  size: A4;
+  margin: 2.5cm 2cm;
+  @top-center { content: string(doctitle); font-size: 8.5pt; color: #666; }
+  @bottom-center { content: counter(page); font-size: 9pt; color: #666; }
+}
+@page :first { margin: 0; @top-center { content: none; } @bottom-center { content: none; } }
+@page toc { @top-center { content: none; } }
+
+/* ---------- Cover (Swiss style) ---------- */
+.cover {
+  width: 210mm; height: 297mm; margin: 0; position: relative;
+  overflow: hidden; page-break-after: always; background: #fdfdfd;
+}
+.cover .grid-line-v { position: absolute; top: 0; bottom: 0; width: 0.4pt; background: #d8d8d8; }
+.cover .accent-bar { position: absolute; left: 0; width: 100%; height: 6mm; background: #2f4f4f; }
+.cover .corner-block { position: absolute; width: 22mm; height: 22mm; background: #2f4f4f; }
+.cover-content { position: absolute; top: 42%; left: 12%; width: 76%; }
+.cover-kicker { font-family: Helvetica, Arial, sans-serif; font-size: 10pt; letter-spacing: 3px; color: #2f4f4f; text-transform: uppercase; margin-bottom: 8mm; }
+.cover-title { font-family: Helvetica, Arial, sans-serif; font-size: 30pt; font-weight: 700; color: #1a1a1a; line-height: 1.15; margin: 0 0 6mm 0; }
+.cover-subtitle { font-size: 13pt; color: #555; margin-bottom: 18mm; }
+.cover-rule { width: 34mm; height: 1.2pt; background: #2f4f4f; margin-bottom: 8mm; }
+.cover-meta { font-size: 11pt; color: #333; line-height: 1.9; font-family: Helvetica, Arial, sans-serif; }
+.cover-meta .label { color: #888; display: inline-block; width: 30mm; }
+
+/* ---------- TOC ---------- */
+.toc-page { page: toc; page-break-after: always; }
+.toc-title { font-family: Helvetica, Arial, sans-serif; font-size: 18pt; font-weight: 700; color: #1a1a1a; border-bottom: 2pt solid #2f4f4f; padding-bottom: 2mm; margin-bottom: 6mm; }
+nav#TOC { font-size: 10pt; }
+nav#TOC ul { list-style: none; padding-left: 0; margin: 0; }
+nav#TOC ul ul { padding-left: 6mm; font-size: 9pt; color: #555; }
+nav#TOC li { margin: 0.8mm 0; }
+nav#TOC li a { display: flex; justify-content: space-between; }
+nav#TOC a { color: #1a1a1a; text-decoration: none; }
+nav#TOC > ul > li > a { font-weight: 600; }
+nav#TOC a::after { content: target-counter(attr(href url), page); font-weight: normal; color: #666; margin-left: 4mm; }
+
+/* ---------- Body ---------- */
+body { font-family: Georgia, "Times New Roman", serif; font-size: 10.5pt; line-height: 1.55; color: #333; text-align: justify; text-align-last: left; }
+h1 { font-family: Helvetica, Arial, sans-serif; font-size: 16pt; color: #1a1a1a; border-bottom: 1.5pt solid #2f4f4f; padding-bottom: 1.5mm; margin: 9mm 0 4mm 0; page-break-after: avoid; }
+h2 { font-family: Helvetica, Arial, sans-serif; font-size: 12.5pt; color: #2f4f4f; margin: 6mm 0 2.5mm 0; page-break-after: avoid; }
+h3 { font-family: Helvetica, Arial, sans-serif; font-size: 11pt; color: #333; margin: 4mm 0 2mm 0; page-break-after: avoid; }
+p { margin: 0 0 2.8mm 0; orphans: 2; widows: 2; }
+strong { color: #1a1a1a; }
+
+/* Three-line tables */
+table { border-collapse: collapse; width: 100%; max-width: 100%; margin: 3mm 0 5mm 0; font-size: 9pt; font-family: Helvetica, Arial, sans-serif; overflow-x: auto; }
+thead { display: table-header-group; }
+thead th { border-top: 1.6pt solid #333; border-bottom: 1pt solid #333; text-align: left; padding: 1.6mm 2mm; font-weight: 700; color: #1a1a1a; }
+tbody td { border-bottom: 0.4pt solid #bbb; padding: 1.4mm 2mm; vertical-align: top; }
+tbody tr:last-child td { border-bottom: 1.6pt solid #333; }
+tr { page-break-inside: avoid; }
+
+/* Code */
+code { font-family: "DejaVu Sans Mono", monospace; font-size: 8.5pt; background: #f5f5f5; padding: 0.2mm 1mm; word-break: break-word; }
+pre { background: #f5f5f5; border-left: 2pt solid #2f4f4f; padding: 2.5mm 3mm; font-size: 8.5pt; max-width: 100%; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; page-break-inside: avoid; }
+pre code { background: none; padding: 0; }
+
+ul, ol { margin: 1mm 0 3mm 0; padding-left: 6mm; }
+li { margin-bottom: 1.2mm; }
+a { color: #2f4f4f; word-break: break-all; }
+blockquote { border-left: 2pt solid #999; margin: 3mm 0; padding-left: 4mm; color: #555; max-width: 100%; }
+hr { border: none; border-top: 0.5pt solid #ccc; margin: 5mm 0; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="grid-line-v" style="left: 12%;"></div>
+  <div class="grid-line-v" style="left: 88%;"></div>
+  <div class="accent-bar" style="top: 24mm;"></div>
+  <div class="corner-block" style="right: 0; bottom: 0;"></div>
+  <div class="cover-content">
+    <div class="cover-kicker">QA Atelier · Document 3 of 3</div>
+    <div class="cover-title">CTFL v4.0 Key Points</div>
+    <div class="cover-subtitle">ISTQB Foundation Level syllabus concepts
+mapped to the QA Atelier project</div>
+    <div class="cover-rule"></div>
+    <div class="cover-meta">
+      <div><span class="label">Author</span> Tomas Xavier Santos</div>
+      <div><span class="label">Project</span> QA Atelier (tom-xs/qa-atelier)</div>
+      <div><span class="label">AUT</span> Cypress Real World App</div>
+      <div><span class="label">Date</span> 2026-07-30</div>
+      <div><span class="label">Version</span> 1.0</div>
+    </div>
+  </div>
+</div>
+
+<div class="toc-page">
+  <div class="toc-title">Contents</div>
+  <nav id="TOC">
+  <ul>
+  <li><a href="#how-to-use-this-document">1. How to Use This
+  Document</a></li>
+  <li><a href="#chapter-1-fundamentals-of-testing">2. Chapter 1 —
+  Fundamentals of Testing</a></li>
+  <li><a href="#chapter-2-testing-throughout-the-sdlc">3. Chapter 2 —
+  Testing Throughout the SDLC</a></li>
+  <li><a href="#chapter-3-static-testing">4. Chapter 3 — Static
+  Testing</a></li>
+  <li><a href="#chapter-4-test-analysis-and-design">5. Chapter 4 — Test
+  Analysis and Design</a></li>
+  <li><a href="#chapter-5-managing-the-test-activities">6. Chapter 5 —
+  Managing the Test Activities</a></li>
+  <li><a href="#chapter-6-test-tools">7. Chapter 6 — Test Tools</a></li>
+  <li><a href="#study-drills-tied-to-the-project">8. Study Drills Tied
+  to the Project</a></li>
+  </ul>
+  </nav>
+</div>
+
+<h1 id="how-to-use-this-document">1. How to Use This Document</h1>
+<p>The ISTQB Certified Tester Foundation Level (CTFL) v4.0 exam rewards
+connecting syllabus concepts to real practice. QA Atelier was built so
+that every examinable idea has a concrete, lived example. Read each
+chapter section here, then find the corresponding artifact in the
+repository — recalling a personal example is far easier than recalling a
+definition.</p>
+<p><strong>Exam facts:</strong> 40 multiple-choice questions, closed
+book; pass at 26/40 (65%) in 60 minutes (+25% in a non-native language).
+Chapters 4 and 5 carry 20 of 40 questions and all K3 “apply” questions —
+that is where the points are.</p>
+<h1 id="chapter-1-fundamentals-of-testing">2. Chapter 1 — Fundamentals
+of Testing</h1>
+<ul>
+<li><strong>Test objectives vary by context.</strong> Here they are:
+defect detection (negative API cases), confidence in the critical path
+(P0 smoke tests), and portfolio evidence of professional process.</li>
+<li><strong>The seven testing principles, each with a project
+example:</strong>
+<ol type="1">
+<li><em>Testing shows the presence of defects, not their absence</em> —
+the <code>body.token</code> failure proved our assumption about the API
+wrong; it proved nothing about the app being correct.</li>
+<li><em>Exhaustive testing is impossible</em> — requirements are
+prioritized P0/P1/P2 instead of “test everything”.</li>
+<li><em>Early testing saves time and money</em> — API contract tests
+were written before UI automation; the broken <code>api.yml</code> was
+caught by review before a single run.</li>
+<li><em>Defects cluster together</em> — auth flows received the most
+negative test cases.</li>
+<li><em>Tests wear out (pesticide paradox)</em> —
+<code>type: exploratory</code> issues exist to keep feeding new cases
+into the suite.</li>
+<li><em>Testing is context dependent</em> — RWA’s cookie-based auth
+shaped the entire API test design; a JWT app would be tested
+differently.</li>
+<li><em>Absence-of-errors fallacy</em> — green tests against a wrong
+contract are worthless; verify against the real server, not the
+documentation.</li>
+</ol></li>
+<li><strong>Test process activities:</strong> planning (Document 1),
+analysis and design (test-case issues), implementation and execution
+(specs + CI), evaluating completion (RTM exit criteria), completion
+(archive).</li>
+<li><strong>Testware:</strong> this documentation set, issues,
+collections, scripts, environments — all version-controlled.</li>
+<li><strong>Traceability:</strong> the RTM links requirements to tests
+and supports coverage evaluation — a core K2 exam theme.</li>
+</ul>
+<h1 id="chapter-2-testing-throughout-the-sdlc">3. Chapter 2 — Testing
+Throughout the SDLC</h1>
+<ul>
+<li><strong>Test levels:</strong> Vitest/Newman suites operate at
+component/integration level (API contracts); Cypress/Playwright specs at
+system level (E2E); CI binds the levels per commit.</li>
+<li><strong>Test types:</strong> functional (most cases), non-functional
+(TC-020 response-time budget), regression (scheduled weekday runs),
+smoke (the P0 subset).</li>
+<li><strong>Shift-left:</strong> API testing before UI automation;
+contract assertions catch breaks earlier and cheaper.</li>
+<li><strong>Maintenance testing:</strong> an RWA submodule update
+triggers full regression through path-filtered workflows.</li>
+</ul>
+<h1 id="chapter-3-static-testing">4. Chapter 3 — Static Testing</h1>
+<ul>
+<li><strong>Reviews are static testing.</strong> Every pull request is a
+review event — the invalid <code>api.yml</code> indentation and the
+illegal <code>working-directory</code> key on a <code>uses:</code> step
+were found statically, before execution. Static testing finds defects
+early and cheaply, and finds defects that execution cannot (e.g.,
+missing requirement coverage in the RTM).</li>
+<li><strong>Static analysis:</strong> TypeScript compilation of spec
+files is automated static analysis — it catches errors before any test
+runs.</li>
+</ul>
+<h1 id="chapter-4-test-analysis-and-design">5. Chapter 4 — Test Analysis
+and Design</h1>
+<p>The heaviest exam chapter (11 of 40 questions). Each technique with
+its project application:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Technique</th>
+<th>Applied in QA Atelier</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Equivalence partitioning</td>
+<td>Login credentials (valid / wrong password / unknown user); amounts
+(positive / zero / negative)</td>
+</tr>
+<tr class="even">
+<td>Boundary value analysis</td>
+<td>Payment amount: 0.01; exactly equal to balance; balance − 0.01
+(TC-014)</td>
+</tr>
+<tr class="odd">
+<td>Decision table testing</td>
+<td>Transaction outcomes: sufficient balance × pay/request ×
+accept/reject combinations</td>
+</tr>
+<tr class="even">
+<td>State transition testing</td>
+<td>Session states (anonymous → authenticated → logged out); transaction
+states (pending → accepted/rejected)</td>
+</tr>
+<tr class="odd">
+<td>Experience-based / error guessing</td>
+<td>The empty-string-secret CI defect came from guessing how GitHub
+expands missing secrets</td>
+</tr>
+<tr class="even">
+<td>Exploratory testing</td>
+<td>Session notes logged as <code>type: exploratory</code> issues,
+feeding new catalog entries</td>
+</tr>
+</tbody>
+</table>
+<p>Specification-based (black-box) cases fill the catalog;
+experience-based sessions keep it honest. Structure-based (white-box)
+coverage is out of scope for this black-box portfolio — a defensible,
+documented choice.</p>
+<h1 id="chapter-5-managing-the-test-activities">6. Chapter 5 — Managing
+the Test Activities</h1>
+<ul>
+<li><strong>Test planning:</strong> Document 1 is the plan — scope,
+approach, resources, risk priorities; the board is the schedule.</li>
+<li><strong>Risk-based prioritization:</strong> P0/P1/P2 labels map to
+product risk; smoke on every PR, full regression on a schedule.</li>
+<li><strong>Entry criteria:</strong> RWA healthy (sanity login curl
+passes), branch CI green. <strong>Exit criteria:</strong> all P0
+automated and passing; no P0/P1 RTM row below “automated”.</li>
+<li><strong>Monitoring and control:</strong> CI run history, uploaded
+artifacts (reports, screenshots, traces), board velocity.</li>
+<li><strong>Configuration management:</strong> everything versioned —
+code, tests, environments, <code>flake.lock</code> pinning the toolchain
+itself.</li>
+<li><strong>Defect management:</strong> <code>type: bug-found</code>
+issues with reproduction steps; severity via priority labels; lifecycle
+on the board.</li>
+</ul>
+<h1 id="chapter-6-test-tools">7. Chapter 6 — Test Tools</h1>
+<ul>
+<li><strong>Tool selection needs a rationale</strong> (a K2 favorite):
+the framework decision matrix assigns each tool a purpose — Playwright
+for modern multi-browser E2E, Cypress for RWA flows and debugging,
+Selenium for legacy/Python pipelines, UIAutomator for Android,
+Postman/Newman for API contracts.</li>
+<li><strong>Automation benefits and risks, demonstrated
+honestly:</strong> speed and repeatability in CI, versus two classic
+pitfalls hit in practice — over-reliance on an assumed contract (the
+nonexistent token) and timing flakiness (the RWA startup race). The
+syllabus names both.</li>
+<li><strong>Pilot before scaling:</strong> the auth domain was automated
+end-to-end before expanding to transactions — the recommended
+tool-introduction approach.</li>
+</ul>
+<h1 id="study-drills-tied-to-the-project">8. Study Drills Tied to the
+Project</h1>
+<ol type="1">
+<li>Recite the seven principles, each with its QA Atelier example,
+without looking.</li>
+<li>Write EP classes and boundaries for “payment amount” in under 3
+minutes (K3 pace).</li>
+<li>Draw the state diagram of a money request (pending →
+accepted/rejected) and derive test cases from it.</li>
+<li>Explain why reviewing a pull request is static testing, and name two
+defects it caught here.</li>
+<li>State the project’s entry and exit criteria from memory, then check
+Document 1.</li>
+</ol>
+
+</body>
+</html>

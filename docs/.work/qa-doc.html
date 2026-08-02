@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>QA Atelier — RWA Test Project Documentation</title>
+<style>
+body { margin: 0; padding: 0; string-set: doctitle ""; }
+h1 { string-set: doctitle content(); }
+
+@page {
+  size: A4;
+  margin: 2.5cm 2cm;
+  @top-center { content: string(doctitle); font-size: 8.5pt; color: #666; }
+  @bottom-center { content: counter(page); font-size: 9pt; color: #666; }
+}
+@page :first { margin: 0; @top-center { content: none; } @bottom-center { content: none; } }
+@page toc { @top-center { content: none; } }
+
+/* ---------- Cover (Swiss style) ---------- */
+.cover {
+  width: 210mm; height: 297mm; margin: 0; position: relative;
+  overflow: hidden; page-break-after: always; background: #fdfdfd;
+}
+.cover .grid-line-v { position: absolute; top: 0; bottom: 0; width: 0.4pt; background: #d8d8d8; }
+.cover .accent-bar { position: absolute; left: 0; width: 100%; height: 6mm; background: #2f4f4f; }
+.cover .corner-block { position: absolute; width: 22mm; height: 22mm; background: #2f4f4f; }
+.cover-content { position: absolute; top: 42%; left: 12%; width: 76%; }
+.cover-kicker { font-family: Helvetica, Arial, sans-serif; font-size: 10pt; letter-spacing: 3px; color: #2f4f4f; text-transform: uppercase; margin-bottom: 8mm; }
+.cover-title { font-family: Helvetica, Arial, sans-serif; font-size: 30pt; font-weight: 700; color: #1a1a1a; line-height: 1.15; margin: 0 0 6mm 0; }
+.cover-subtitle { font-size: 13pt; color: #555; margin-bottom: 18mm; }
+.cover-rule { width: 34mm; height: 1.2pt; background: #2f4f4f; margin-bottom: 8mm; }
+.cover-meta { font-size: 11pt; color: #333; line-height: 1.9; font-family: Helvetica, Arial, sans-serif; }
+.cover-meta .label { color: #888; display: inline-block; width: 30mm; }
+
+/* ---------- TOC ---------- */
+.toc-page { page: toc; page-break-after: always; }
+.toc-title { font-family: Helvetica, Arial, sans-serif; font-size: 18pt; font-weight: 700; color: #1a1a1a; border-bottom: 2pt solid #2f4f4f; padding-bottom: 2mm; margin-bottom: 6mm; }
+nav#TOC { font-size: 10pt; }
+nav#TOC ul { list-style: none; padding-left: 0; margin: 0; }
+nav#TOC ul ul { padding-left: 6mm; font-size: 9pt; color: #555; }
+nav#TOC li { margin: 0.8mm 0; }
+nav#TOC li a { display: flex; justify-content: space-between; }
+nav#TOC a { color: #1a1a1a; text-decoration: none; }
+nav#TOC > ul > li > a { font-weight: 600; }
+nav#TOC a::after { content: target-counter(attr(href url), page); font-weight: normal; color: #666; margin-left: 4mm; }
+
+/* ---------- Body ---------- */
+body { font-family: Georgia, "Times New Roman", serif; font-size: 10.5pt; line-height: 1.55; color: #333; text-align: justify; text-align-last: left; }
+h1 { font-family: Helvetica, Arial, sans-serif; font-size: 16pt; color: #1a1a1a; border-bottom: 1.5pt solid #2f4f4f; padding-bottom: 1.5mm; margin: 9mm 0 4mm 0; page-break-after: avoid; }
+h2 { font-family: Helvetica, Arial, sans-serif; font-size: 12.5pt; color: #2f4f4f; margin: 6mm 0 2.5mm 0; page-break-after: avoid; }
+h3 { font-family: Helvetica, Arial, sans-serif; font-size: 11pt; color: #333; margin: 4mm 0 2mm 0; page-break-after: avoid; }
+p { margin: 0 0 2.8mm 0; orphans: 2; widows: 2; }
+strong { color: #1a1a1a; }
+
+/* Three-line tables */
+table { border-collapse: collapse; width: 100%; max-width: 100%; margin: 3mm 0 5mm 0; font-size: 9pt; font-family: Helvetica, Arial, sans-serif; overflow-x: auto; }
+thead { display: table-header-group; }
+thead th { border-top: 1.6pt solid #333; border-bottom: 1pt solid #333; text-align: left; padding: 1.6mm 2mm; font-weight: 700; color: #1a1a1a; }
+tbody td { border-bottom: 0.4pt solid #bbb; padding: 1.4mm 2mm; vertical-align: top; }
+tbody tr:last-child td { border-bottom: 1.6pt solid #333; }
+tr { page-break-inside: avoid; }
+
+/* Code */
+code { font-family: "DejaVu Sans Mono", monospace; font-size: 8.5pt; background: #f5f5f5; padding: 0.2mm 1mm; word-break: break-word; }
+pre { background: #f5f5f5; border-left: 2pt solid #2f4f4f; padding: 2.5mm 3mm; font-size: 8.5pt; max-width: 100%; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; page-break-inside: avoid; }
+pre code { background: none; padding: 0; }
+
+ul, ol { margin: 1mm 0 3mm 0; padding-left: 6mm; }
+li { margin-bottom: 1.2mm; }
+a { color: #2f4f4f; word-break: break-all; }
+blockquote { border-left: 2pt solid #999; margin: 3mm 0; padding-left: 4mm; color: #555; max-width: 100%; }
+hr { border: none; border-top: 0.5pt solid #ccc; margin: 5mm 0; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="grid-line-v" style="left: 12%;"></div>
+  <div class="grid-line-v" style="left: 88%;"></div>
+  <div class="accent-bar" style="top: 24mm;"></div>
+  <div class="corner-block" style="right: 0; bottom: 0;"></div>
+  <div class="cover-content">
+    <div class="cover-kicker">QA Atelier · Test Project</div>
+    <div class="cover-title">RWA Test Project<br>Documentation</div>
+    <div class="cover-subtitle">Requirements · Test Case Catalog · RTM · Environment Setup · Operating Model · CTFL Key Points</div>
+    <div class="cover-rule"></div>
+    <div class="cover-meta">
+      <div><span class="label">Author</span> Tomas Xavier Santos</div>
+      <div><span class="label">Project</span> QA Atelier (tom-xs/qa-atelier)</div>
+      <div><span class="label">AUT</span> Cypress Real World App</div>
+      <div><span class="label">Date</span> 2026-07-30</div>
+      <div><span class="label">Version</span> 1.0</div>
+    </div>
+  </div>
+</div>
+
+<div class="toc-page">
+  <div class="toc-title">Contents</div>
+  <nav id="TOC">
+  <ul>
+  <li><a href="#introduction">1. Introduction</a>
+  <ul>
+  <li><a href="#purpose-of-this-document">1.1 Purpose of this
+  document</a></li>
+  <li><a href="#project-context">1.2 Project context</a></li>
+  <li><a href="#application-under-test">1.3 Application under
+  test</a></li>
+  <li><a href="#scope">1.4 Scope</a></li>
+  </ul></li>
+  <li><a href="#functional-requirements">2. Functional
+  Requirements</a></li>
+  <li><a href="#test-case-catalog">3. Test Case Catalog</a>
+  <ul>
+  <li><a href="#existing-test-cases">3.1 Existing test cases</a></li>
+  <li><a href="#planned-test-cases">3.2 Planned test cases</a></li>
+  </ul></li>
+  <li><a href="#requirements-traceability-matrix-rtm">4. Requirements
+  Traceability Matrix (RTM)</a></li>
+  <li><a href="#environment-setup">5. Environment Setup</a>
+  <ul>
+  <li><a href="#nix-devshell">5.1 Nix devShell</a></li>
+  <li><a href="#boot-the-rwa">5.2 Boot the RWA</a></li>
+  <li><a href="#postman-gui">5.3 Postman (GUI)</a></li>
+  <li><a href="#newman-cli-runner">5.4 Newman (CLI runner)</a></li>
+  <li><a href="#programmatic-api-tests-vitest">5.5 Programmatic API
+  tests (Vitest)</a></li>
+  <li><a href="#other-frameworks-quick-reference">5.6 Other frameworks
+  (quick reference)</a></li>
+  <li><a href="#github-secrets-and-ci">5.7 GitHub secrets and
+  CI</a></li>
+  </ul></li>
+  <li><a href="#how-the-project-operates">6. How the Project
+  Operates</a>
+  <ul>
+  <li><a href="#monorepo-layout">6.1 Monorepo layout</a></li>
+  <li><a href="#branching-model">6.2 Branching model</a></li>
+  <li><a href="#test-management-on-github">6.3 Test management on
+  GitHub</a></li>
+  <li><a href="#ci-pipelines">6.4 CI pipelines</a></li>
+  <li><a href="#ai-assisted-workflow">6.5 AI-assisted workflow</a></li>
+  </ul></li>
+  <li><a href="#preparing-for-testing-and-automation">7. Preparing for
+  Testing and Automation</a>
+  <ul>
+  <li><a href="#conventions-non-negotiable-from-day-one">7.1 Conventions
+  (non-negotiable from day one)</a></li>
+  <li><a href="#test-data-and-state-strategy">7.2 Test data and state
+  strategy</a></li>
+  <li><a href="#isolation-rules">7.3 Isolation rules</a></li>
+  <li><a href="#pattern-adoption-order">7.4 Pattern adoption
+  order</a></li>
+  </ul></li>
+  <li><a href="#glossary">8. Glossary</a></li>
+  <li><a href="#ctfl-v4.0-key-points-mapped-to-this-project">9. CTFL
+  v4.0 Key Points — Mapped to This Project</a>
+  <ul>
+  <li><a href="#chapter-1-fundamentals-of-testing">9.1 Chapter 1 —
+  Fundamentals of Testing</a></li>
+  <li><a href="#chapter-2-testing-throughout-the-sdlc">9.2 Chapter 2 —
+  Testing Throughout the SDLC</a></li>
+  <li><a href="#chapter-3-static-testing">9.3 Chapter 3 — Static
+  Testing</a></li>
+  <li><a href="#chapter-4-test-analysis-and-design">9.4 Chapter 4 — Test
+  Analysis and Design</a></li>
+  <li><a href="#chapter-5-managing-the-test-activities">9.5 Chapter 5 —
+  Managing the Test Activities</a></li>
+  <li><a href="#chapter-6-test-tools">9.6 Chapter 6 — Test
+  Tools</a></li>
+  </ul></li>
+  <li><a href="#appendix-quick-reference">10. Appendix — Quick
+  Reference</a></li>
+  </ul>
+  </nav>
+</div>
+
+<h1 id="introduction">1. Introduction</h1>
+<h2 id="purpose-of-this-document">1.1 Purpose of this document</h2>
+<p>This document is the single reference for the QA Atelier test project
+against the Cypress Real World App (RWA). It consolidates the functional
+requirements of the application under test, the catalog of existing and
+planned test cases, a requirements traceability matrix (RTM), the
+environment setup procedures, the project’s operating model, and the
+conventions to follow before writing new tests. It closes with a
+glossary and a mapping to the ISTQB Certified Tester Foundation Level
+(CTFL) v4.0 syllabus, so the project doubles as exam preparation
+material.</p>
+<h2 id="project-context">1.2 Project context</h2>
+<p>QA Atelier (<code>tom-xs/qa-atelier</code>) is a personal portfolio
+project: a monorepo that practices professional QA workflows end to end
+— test planning, test design, automation across several frameworks,
+CI/CD, and issue-based test management on GitHub. It is built to look
+and operate like a real-world QA engagement, not a tutorial exercise:
+branch protection, required CI checks, labeled test-case issues, and
+traceability from requirements to automated specs.</p>
+<h2 id="application-under-test">1.3 Application under test</h2>
+<p>The <strong>Cypress Real World App (RWA)</strong> is an open-source
+payment application built by Cypress as a realistic testing target. It
+mimics a Venmo-style service: users sign up, link bank accounts, send
+payments, request money, browse transaction feeds, like and comment on
+transactions, and receive notifications. It runs locally with a React
+frontend (port 3000) and an Express REST API (port 3001), backed by a
+file-based JSON database (<code>apps/rwa/data/database.json</code>) that
+ships with a seed dataset of users and transactions.</p>
+<p>Two API characteristics matter for test design and were verified
+against the running server:</p>
+<ul>
+<li><strong>Session-cookie authentication.</strong>
+<code>POST /login</code> returns the user object and sets a
+<code>connect.sid</code> cookie. There is no bearer token; protected
+endpoints are called with the session cookie.</li>
+<li><strong>Ephemeral state.</strong> Every <code>yarn start</code>
+re-seeds the database from <code>data/database-seed.json</code>. A
+restart is a factory reset — a property the test data strategy in
+Section 7 exploits.</li>
+</ul>
+<h2 id="scope">1.4 Scope</h2>
+<p><strong>In scope:</strong> functional testing of auth, users, bank
+accounts, transactions, feeds, and notifications at API and UI level; CI
+integration of all suites; test management artifacts (this document,
+test-case issues, RTM).</p>
+<p><strong>Out of scope:</strong> performance/load testing, security
+penetration testing, mobile (iOS) coverage, and the RWA’s optional OAuth
+providers (Auth0, Okta, Cognito, Google) — the local username/password
+strategy is the only auth flow tested.</p>
+<h1 id="functional-requirements">2. Functional Requirements</h1>
+<p>Requirements are written as testable statements with stable IDs for
+traceability. Priorities: <strong>P0</strong> = critical path (must pass
+before any “release”), <strong>P1</strong> = high (every test cycle),
+<strong>P2</strong> = normal.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>ID</th>
+<th>Requirement</th>
+<th>Priority</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>REQ-AUTH-001</td>
+<td>A user with valid credentials can log in; the server returns the
+user object and establishes a session cookie</td>
+<td>P0</td>
+</tr>
+<tr class="even">
+<td>REQ-AUTH-002</td>
+<td>A user with an invalid password cannot log in; the API returns 401
+and the UI shows an error message</td>
+<td>P0</td>
+</tr>
+<tr class="odd">
+<td>REQ-AUTH-003</td>
+<td>A logged-in user can log out; the session is invalidated and
+protected pages redirect to sign-in</td>
+<td>P1</td>
+</tr>
+<tr class="even">
+<td>REQ-AUTH-004</td>
+<td>A new user can sign up with username, password, first and last
+name</td>
+<td>P1</td>
+</tr>
+<tr class="odd">
+<td>REQ-AUTH-005</td>
+<td>An active session persists across page reloads (cookie-based); no
+re-login needed</td>
+<td>P1</td>
+</tr>
+<tr class="even">
+<td>REQ-USER-001</td>
+<td>A logged-in user can search other users by name or username</td>
+<td>P1</td>
+</tr>
+<tr class="odd">
+<td>REQ-USER-002</td>
+<td>A logged-in user can view another user’s public profile (first name,
+last name, avatar)</td>
+<td>P2</td>
+</tr>
+<tr class="even">
+<td>REQ-USER-003</td>
+<td>A logged-in user can update their own account settings (name, email,
+phone)</td>
+<td>P2</td>
+</tr>
+<tr class="odd">
+<td>REQ-BANK-001</td>
+<td>A logged-in user can link a bank account with bank name, routing
+number, account number</td>
+<td>P1</td>
+</tr>
+<tr class="even">
+<td>REQ-BANK-002</td>
+<td>A logged-in user can view their list of linked bank accounts</td>
+<td>P1</td>
+</tr>
+<tr class="odd">
+<td>REQ-BANK-003</td>
+<td>A logged-in user can delete (soft-delete) a linked bank account</td>
+<td>P2</td>
+</tr>
+<tr class="even">
+<td>REQ-TX-001</td>
+<td>A logged-in user with sufficient balance can pay another user an
+amount with a description; the transaction appears in feeds and balances
+update</td>
+<td>P0</td>
+</tr>
+<tr class="odd">
+<td>REQ-TX-002</td>
+<td>A logged-in user can request money from another user; the request
+appears as pending for the recipient</td>
+<td>P0</td>
+</tr>
+<tr class="even">
+<td>REQ-TX-003</td>
+<td>Transaction feeds are filtered correctly: Mine, Friends, Public</td>
+<td>P1</td>
+</tr>
+<tr class="odd">
+<td>REQ-TX-004</td>
+<td>The recipient of a money request can accept (creates payment) or
+reject it</td>
+<td>P1</td>
+</tr>
+<tr class="even">
+<td>REQ-TX-005</td>
+<td>A user can like and comment on a transaction</td>
+<td>P2</td>
+</tr>
+<tr class="odd">
+<td>REQ-TX-006</td>
+<td>A payment exceeding the sender’s balance is rejected with an
+error</td>
+<td>P1</td>
+</tr>
+<tr class="even">
+<td>REQ-NOTIF-001</td>
+<td>A user receives a notification when a payment is received or a
+request is created for them</td>
+<td>P1</td>
+</tr>
+<tr class="odd">
+<td>REQ-NOTIF-002</td>
+<td>A user can dismiss notifications; the unread counter updates</td>
+<td>P2</td>
+</tr>
+</tbody>
+</table>
+<h1 id="test-case-catalog">3. Test Case Catalog</h1>
+<p>Test cases are managed as GitHub Issues using the
+<code>type: test-case</code> label and the test-case template. IDs are
+assigned sequentially (TC-XXX).</p>
+<h2 id="existing-test-cases">3.1 Existing test cases</h2>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>ID</th>
+<th>Title</th>
+<th>Requirement</th>
+<th>Type</th>
+<th>Priority</th>
+<th>Framework</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>TC-001</td>
+<td>Log in with valid credentials (UI)</td>
+<td>REQ-AUTH-001</td>
+<td>Smoke</td>
+<td>P0</td>
+<td>Cypress</td>
+<td>Retired — covered by API tests</td>
+</tr>
+<tr class="even">
+<td>TC-002</td>
+<td>Create a payment transaction</td>
+<td>REQ-TX-001</td>
+<td>Functional</td>
+<td>P1</td>
+<td>Cypress</td>
+<td>Documented (issue #6)</td>
+</tr>
+<tr class="odd">
+<td>TC-003</td>
+<td>Request money from another user</td>
+<td>REQ-TX-002</td>
+<td>Functional</td>
+<td>P1</td>
+<td>Cypress</td>
+<td>Documented (issue #7)</td>
+</tr>
+<tr class="even">
+<td>TC-004</td>
+<td>User cannot log in with invalid credentials</td>
+<td>REQ-AUTH-002</td>
+<td>Smoke / Negative</td>
+<td>P0</td>
+<td>Cypress</td>
+<td>Documented (issue #8)</td>
+</tr>
+<tr class="odd">
+<td>TC-005</td>
+<td>RWA API auth collection + CI environment</td>
+<td>REQ-AUTH-001, REQ-AUTH-002</td>
+<td>API Contract</td>
+<td>P1</td>
+<td>Postman / Newman</td>
+<td>Documented (issue #12)</td>
+</tr>
+<tr class="even">
+<td>—</td>
+<td>API: login returns user + session cookie; 401 on bad password;
+cookie grants <code>/users</code></td>
+<td>REQ-AUTH-001, REQ-AUTH-002, REQ-AUTH-005</td>
+<td>API Contract</td>
+<td>P0</td>
+<td>Vitest</td>
+<td>Automated (<code>api/tests/rwa/auth.test.ts</code>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="planned-test-cases">3.2 Planned test cases</h2>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>ID</th>
+<th>Title</th>
+<th>Requirement</th>
+<th>Type</th>
+<th>Priority</th>
+<th>Target framework</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>TC-006</td>
+<td>Log out invalidates the session</td>
+<td>REQ-AUTH-003</td>
+<td>Functional</td>
+<td>P1</td>
+<td>Cypress</td>
+</tr>
+<tr class="even">
+<td>TC-007</td>
+<td>Sign up creates a new account</td>
+<td>REQ-AUTH-004</td>
+<td>Functional</td>
+<td>P1</td>
+<td>Cypress</td>
+</tr>
+<tr class="odd">
+<td>TC-008</td>
+<td>Session persists across reload</td>
+<td>REQ-AUTH-005</td>
+<td>Functional</td>
+<td>P1</td>
+<td>Playwright</td>
+</tr>
+<tr class="even">
+<td>TC-009</td>
+<td>Link a new bank account</td>
+<td>REQ-BANK-001</td>
+<td>Functional</td>
+<td>P1</td>
+<td>Cypress</td>
+</tr>
+<tr class="odd">
+<td>TC-010</td>
+<td>Bank accounts list shows linked accounts</td>
+<td>REQ-BANK-002</td>
+<td>Functional</td>
+<td>P1</td>
+<td>Postman / Newman</td>
+</tr>
+<tr class="even">
+<td>TC-011</td>
+<td>Feeds filter Mine / Friends / Public correctly</td>
+<td>REQ-TX-003</td>
+<td>Functional</td>
+<td>P1</td>
+<td>Cypress</td>
+</tr>
+<tr class="odd">
+<td>TC-012</td>
+<td>Recipient accepts a money request</td>
+<td>REQ-TX-004</td>
+<td>Functional</td>
+<td>P1</td>
+<td>Cypress</td>
+</tr>
+<tr class="even">
+<td>TC-013</td>
+<td>Recipient rejects a money request</td>
+<td>REQ-TX-004</td>
+<td>Negative</td>
+<td>P2</td>
+<td>Cypress</td>
+</tr>
+<tr class="odd">
+<td>TC-014</td>
+<td>Payment above balance is rejected</td>
+<td>REQ-TX-006</td>
+<td>Negative</td>
+<td>P1</td>
+<td>Vitest (API)</td>
+</tr>
+<tr class="even">
+<td>TC-015</td>
+<td>Like and comment on a transaction</td>
+<td>REQ-TX-005</td>
+<td>Functional</td>
+<td>P2</td>
+<td>Cypress</td>
+</tr>
+<tr class="odd">
+<td>TC-016</td>
+<td>Notification appears for received request</td>
+<td>REQ-NOTIF-001</td>
+<td>Functional</td>
+<td>P1</td>
+<td>Cypress</td>
+</tr>
+<tr class="even">
+<td>TC-017</td>
+<td>User search returns matching users</td>
+<td>REQ-USER-001</td>
+<td>Functional</td>
+<td>P2</td>
+<td>Vitest (API)</td>
+</tr>
+<tr class="odd">
+<td>TC-018</td>
+<td>Update account settings persists</td>
+<td>REQ-USER-003</td>
+<td>Functional</td>
+<td>P2</td>
+<td>Playwright</td>
+</tr>
+<tr class="even">
+<td>TC-019</td>
+<td>API schema contract: <code>/transactions</code> response shape</td>
+<td>REQ-TX-001</td>
+<td>API Contract</td>
+<td>P1</td>
+<td>Postman / Newman</td>
+</tr>
+<tr class="odd">
+<td>TC-020</td>
+<td>Response-time budget: login under 500 ms</td>
+<td>REQ-AUTH-001</td>
+<td>Non-functional</td>
+<td>P2</td>
+<td>Postman / Newman</td>
+</tr>
+</tbody>
+</table>
+<h1 id="requirements-traceability-matrix-rtm">4. Requirements
+Traceability Matrix (RTM)</h1>
+<p>The RTM proves that every requirement has at least one test case, and
+shows where coverage is automated versus manual-only. It is updated
+whenever a test case is added, automated, or retired.</p>
+<p>Coverage key: <strong>A</strong> = automated (passing spec in CI),
+<strong>D</strong> = documented (issue written, not yet automated),
+<strong>P</strong> = planned (cataloged in this document),
+<strong>—</strong> = no coverage.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Requirement</th>
+<th>Test cases</th>
+<th>Coverage</th>
+<th>Gap / next action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>REQ-AUTH-001</td>
+<td>TC-001 (retired), TC-005, Vitest auth suite</td>
+<td><strong>A</strong></td>
+<td>Automate TC-005 collection</td>
+</tr>
+<tr class="even">
+<td>REQ-AUTH-002</td>
+<td>TC-004, TC-005, Vitest auth suite</td>
+<td><strong>A</strong></td>
+<td>Automate TC-004 in Cypress (UI error message)</td>
+</tr>
+<tr class="odd">
+<td>REQ-AUTH-003</td>
+<td>TC-006</td>
+<td>P</td>
+<td>Write Cypress spec</td>
+</tr>
+<tr class="even">
+<td>REQ-AUTH-004</td>
+<td>TC-007</td>
+<td>P</td>
+<td>Write Cypress spec</td>
+</tr>
+<tr class="odd">
+<td>REQ-AUTH-005</td>
+<td>TC-008, Vitest auth suite (cookie reuse)</td>
+<td><strong>A</strong> (API level)</td>
+<td>UI-level check in TC-008</td>
+</tr>
+<tr class="even">
+<td>REQ-USER-001</td>
+<td>TC-017</td>
+<td>P</td>
+<td>Write Vitest spec for <code>/users/search</code></td>
+</tr>
+<tr class="odd">
+<td>REQ-USER-002</td>
+<td>—</td>
+<td>—</td>
+<td>Add test case (P2)</td>
+</tr>
+<tr class="even">
+<td>REQ-USER-003</td>
+<td>TC-018</td>
+<td>P</td>
+<td>Write Playwright spec</td>
+</tr>
+<tr class="odd">
+<td>REQ-BANK-001</td>
+<td>TC-009</td>
+<td>P</td>
+<td>Write Cypress spec</td>
+</tr>
+<tr class="even">
+<td>REQ-BANK-002</td>
+<td>TC-010</td>
+<td>P</td>
+<td>Add to Postman collection</td>
+</tr>
+<tr class="odd">
+<td>REQ-BANK-003</td>
+<td>—</td>
+<td>—</td>
+<td>Add test case (P2)</td>
+</tr>
+<tr class="even">
+<td>REQ-TX-001</td>
+<td>TC-002, TC-019</td>
+<td>D</td>
+<td>Automate TC-002 in Cypress</td>
+</tr>
+<tr class="odd">
+<td>REQ-TX-002</td>
+<td>TC-003</td>
+<td>D</td>
+<td>Automate TC-003 in Cypress</td>
+</tr>
+<tr class="even">
+<td>REQ-TX-003</td>
+<td>TC-011</td>
+<td>P</td>
+<td>Write Cypress spec</td>
+</tr>
+<tr class="odd">
+<td>REQ-TX-004</td>
+<td>TC-012, TC-013</td>
+<td>P</td>
+<td>Write Cypress specs</td>
+</tr>
+<tr class="even">
+<td>REQ-TX-005</td>
+<td>TC-015</td>
+<td>P</td>
+<td>Write Cypress spec</td>
+</tr>
+<tr class="odd">
+<td>REQ-TX-006</td>
+<td>TC-014</td>
+<td>P</td>
+<td>Write Vitest spec</td>
+</tr>
+<tr class="even">
+<td>REQ-NOTIF-001</td>
+<td>TC-016</td>
+<td>P</td>
+<td>Write Cypress spec</td>
+</tr>
+<tr class="odd">
+<td>REQ-NOTIF-002</td>
+<td>—</td>
+<td>—</td>
+<td>Add test case (P2)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Coverage summary (2026-07-30):</strong> 18 requirements — 3
+with automated coverage, 4 documented, 9 planned, 3 with no test case
+yet (all P2). Rule: no requirement ships to “Done” with an
+<strong>—</strong> in this matrix; P0/P1 rows must reach
+<strong>A</strong> before the project is considered complete.</p>
+<h1 id="environment-setup">5. Environment Setup</h1>
+<p>All steps assume the QA Atelier repository cloned with submodules on
+the NixOS machine.</p>
+<h2 id="nix-devshell">5.1 Nix devShell</h2>
+<p>Every tool is provided by the project flake; nothing is installed
+globally.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone <span class="at">--recurse-submodules</span> https://github.com/tom-xs/qa-atelier.git</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> qa-atelier</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">nix</span> develop              <span class="co"># or: direnv allow (uses .envrc)</span></span></code></pre></div>
+<p><code>flake.lock</code> is committed and pins all tool versions. The
+devShell exports <code>PLAYWRIGHT_BROWSERS_PATH</code>,
+<code>CYPRESS_RUN_BINARY</code>, <code>ANDROID_HOME</code>, and
+<code>JAVA_HOME</code>.</p>
+<h2 id="boot-the-rwa">5.2 Boot the RWA</h2>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> apps/rwa</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">yarn</span> install <span class="at">--legacy-peer-deps</span>   <span class="co"># first time only</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">yarn</span> start                        <span class="co"># re-seeds the DB, serves UI :3000 and API :3001</span></span></code></pre></div>
+<p>Sanity check:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-s</span> <span class="at">-X</span> POST http://localhost:3001/login <span class="dt">\</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">&#39;Content-Type: application/json&#39;</span> <span class="dt">\</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> <span class="st">&#39;{&quot;username&quot;:&quot;Heath93&quot;,&quot;password&quot;:&quot;s3cret&quot;}&#39;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># expected: {&quot;user&quot;:{&quot;id&quot;:&quot;...&quot;,&quot;username&quot;:&quot;Heath93&quot;,...}}</span></span></code></pre></div>
+<p>State management: <code>yarn start</code> = reset to seed;
+<code>yarn start:empty</code> = empty database;
+<code>yarn db:seed:dev</code> = re-seed while stopped.</p>
+<h2 id="postman-gui">5.3 Postman (GUI)</h2>
+<ol type="1">
+<li>Add <code>postman</code> to the devShell packages in
+<code>flake.nix</code> (unfree is already allowed) and re-enter
+<code>nix develop</code>; or run ad hoc:
+<code>NIXPKGS_ALLOW_UNFREE=1 nix shell --impure nixpkgs#postman</code>.</li>
+<li>Sign in with a free account (collections and environments require
+it; the offline lightweight client does not have them). Create a
+<strong>private personal workspace</strong>. Do <strong>not</strong>
+connect the workspace to a local folder (Native Git) — that feature
+stores Postman’s own YAML tree and conflicts with the repo layout.</li>
+<li>Optional: disable Agent Mode in Settings so the “New” button stops
+offering AI setup.</li>
+<li>Build the <code>RWA Auth</code> collection:
+<code>POST {{baseUrl}}/login</code> (valid + bad password),
+<code>GET {{baseUrl}}/users</code>,
+<code>GET {{baseUrl}}/users/{{userId}}</code> — assertions per issue #12
+(status, <code>user</code> object, <code>connect.sid</code> cookie via
+<code>pm.cookies.has</code>, response time under 500 ms, chain
+<code>userId</code> into the environment).</li>
+<li>Create environment <strong>CI</strong>:
+<code>baseUrl=http://localhost:3001</code>,
+<code>username=Heath93</code>, <code>password</code> with initial value
+<code>{{RWA_PASS}}</code> and current value <code>s3cret</code>, empty
+<code>userId</code>. Only initial values are exported — the real
+password never leaves the machine.</li>
+<li>Export: collection (v2.1) to
+<code>api/collections/rwa-auth.postman_collection.json</code>;
+environment to
+<code>api/environments/ci.postman_environment.json</code>. Verify with
+<code>jq</code> that no real password is in the exported files.</li>
+</ol>
+<h2 id="newman-cli-runner">5.4 Newman (CLI runner)</h2>
+<p>Newman is a devDependency of <code>api/</code> (pinned by lockfile)
+and also present in the devShell. Run all collections from the repo
+root:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> api/newman/run-all.sh</span></code></pre></div>
+<p>The script skips gracefully when no collections exist, injects
+<code>RWA_PASS</code> via <code>--env-var</code>, and writes JUnit
+reports to <code>api/reports/</code> (git-ignored, uploaded as CI
+artifacts).</p>
+<h2 id="programmatic-api-tests-vitest">5.5 Programmatic API tests
+(Vitest)</h2>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> api <span class="kw">&amp;&amp;</span> <span class="ex">npm</span> install   <span class="co"># first time; afterwards npm ci</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> test                <span class="co"># vitest run --passWithNoTests</span></span></code></pre></div>
+<p>Requires RWA running on port 3001. Credentials come from
+<code>RWA_USER</code> / <code>RWA_PASS</code> env vars with
+<code>||</code> fallbacks to the public seed credentials (missing CI
+secrets expand to empty strings, which <code>??</code> would not
+catch).</p>
+<h2 id="other-frameworks-quick-reference">5.6 Other frameworks (quick
+reference)</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Framework</th>
+<th>Install</th>
+<th>Run</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Playwright</td>
+<td><code>cd web/playwright &amp;&amp; npm install</code></td>
+<td><code>npx playwright test</code></td>
+</tr>
+<tr class="even">
+<td>Cypress</td>
+<td><code>cd web/cypress &amp;&amp; npm install</code></td>
+<td><code>npx cypress run</code> (RWA must be running)</td>
+</tr>
+<tr class="odd">
+<td>Selenium</td>
+<td>devShell pythonEnv</td>
+<td><code>pytest web/selenium/tests/ -v</code></td>
+</tr>
+<tr class="even">
+<td>UIAutomator</td>
+<td>devShell Android SDK</td>
+<td><code>cd android &amp;&amp; ./gradlew connectedAndroidTest</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="github-secrets-and-ci">5.7 GitHub secrets and CI</h2>
+<p>Repository secrets (Settings → Secrets and variables → Actions):
+<code>RWA_USER</code>, <code>RWA_PASS</code>. The workflows pass them as
+env vars; test code falls back to the public seed credentials when they
+are absent, but the secrets should stay configured to exercise the
+intended pattern.</p>
+<h1 id="how-the-project-operates">6. How the Project Operates</h1>
+<h2 id="monorepo-layout">6.1 Monorepo layout</h2>
+<pre><code>qa-atelier/
+├── .github/            # workflows, issue templates, copilot-instructions.md
+├── android/            # UIAutomator tests (Kotlin + Gradle)
+├── api/                # Postman collections, environments, Newman, Vitest tests
+├── apps/rwa/           # Cypress Real World App (git submodule)
+├── docs/               # test plan and test-case docs
+├── shared/             # reusable utilities and test data
+├── web/
+│   ├── cypress/        # Cypress specs + page objects
+│   ├── playwright/     # Playwright specs + page objects
+│   └── selenium/       # Selenium tests (Python)
+├── flake.nix           # devShell — all tools, pinned
+├── Makefile            # make test-* entry points
+└── package.json        # root scripts via npm --prefix (no workspaces)</code></pre>
+<p>Each framework folder is self-contained with its own lockfile;
+installs happen per folder.</p>
+<h2 id="branching-model">6.2 Branching model</h2>
+<p><code>master</code> is protected: changes land only via pull request,
+and the required CI checks must pass. Solo-maintainer reviews are set to
+zero approvals. Feature branches are named
+<code>feat/&lt;topic&gt;</code>, fixes
+<code>fix/&lt;topic&gt;</code>.</p>
+<h2 id="test-management-on-github">6.3 Test management on GitHub</h2>
+<ul>
+<li><strong>Test cases</strong> are Issues created from the test-case
+template, labeled <code>type: test-case</code> plus framework, app, and
+priority labels.</li>
+<li><strong>Defects</strong> found during testing use
+<code>type: bug-found</code>; exploratory session notes use
+<code>type: exploratory</code>.</li>
+<li><strong>Status</strong> labels (<code>status: automated</code>,
+<code>status: manual-only</code>) track automation progress; the RTM in
+Section 4 mirrors them.</li>
+<li>A project board tracks the flow: Backlog → Exploration → In
+Scripting → In Review → Done / Blocked.</li>
+</ul>
+<h2 id="ci-pipelines">6.4 CI pipelines</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Workflow</th>
+<th>Trigger</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Playwright E2E</td>
+<td>push/PR to master, weekday cron</td>
+<td>Multi-browser E2E, uploads HTML report</td>
+</tr>
+<tr class="even">
+<td>Cypress E2E</td>
+<td>push/PR to master</td>
+<td>Starts RWA, runs specs on Chrome + Firefox matrix, uploads
+screenshots on failure; skips when no specs exist</td>
+</tr>
+<tr class="odd">
+<td>API Tests</td>
+<td>push/PR touching <code>api/**</code> or
+<code>apps/rwa/**</code></td>
+<td>Starts RWA, waits on port 3001, runs Newman collections + Vitest
+suite, uploads reports</td>
+</tr>
+<tr class="even">
+<td>Android UIAutomator</td>
+<td>push/PR to master</td>
+<td>Runs connected tests on an emulator (API 33) when Kotlin tests
+exist</td>
+</tr>
+</tbody>
+</table>
+<h2 id="ai-assisted-workflow">6.5 AI-assisted workflow</h2>
+<p>GitHub Copilot handles inline completion and boilerplate; Kimi Code
+handles reasoning tasks (coverage reviews, refactors, failure
+diagnosis). Conventions for both live in
+<code>.github/copilot-instructions.md</code>. Rule: generated test code
+is never merged without running it locally first.</p>
+<h1 id="preparing-for-testing-and-automation">7. Preparing for Testing
+and Automation</h1>
+<h2 id="conventions-non-negotiable-from-day-one">7.1 Conventions
+(non-negotiable from day one)</h2>
+<ul>
+<li><strong>Page Object Model</strong> for web frameworks,
+<strong>Screen Object Model</strong> for Android — tests never locate
+elements directly.</li>
+<li><strong>AAA structure</strong> (Arrange–Act–Assert) with visible
+phase separation in every test.</li>
+<li><strong>Selectors</strong>: <code>data-test</code> /
+<code>data-testid</code> attributes only
+(<code>cy.getBySel('...')</code>).</li>
+<li><strong>Test names</strong> read as
+<code>[action] [expected result]</code>.</li>
+<li><strong>Explicit waiting only</strong> — conditions, never time:
+<code>expect(locator).toBeVisible()</code>,
+<code>should('be.visible')</code>, <code>WebDriverWait</code>. No
+<code>sleep</code>, no <code>cy.wait(ms)</code>.</li>
+<li><strong>Tests are independent</strong> and runnable in any
+order.</li>
+</ul>
+<h2 id="test-data-and-state-strategy">7.2 Test data and state
+strategy</h2>
+<p>Exploit the RWA’s ephemeral database:</p>
+<ul>
+<li><strong>Default state</strong>: the seeded dataset (Heath93 et al.)
+after every server start.</li>
+<li><strong>Per-test setup</strong>: create the data a test needs via
+API in <code>beforeEach</code> (5–10x faster than UI flows and immune to
+UI changes) — the “API seeding” pattern.</li>
+<li><strong>Reset</strong>: restart the server between manual
+exploratory sessions; never reset mid-suite.</li>
+<li><strong>Empty-state testing</strong>: <code>yarn start:empty</code>
+for signup/onboarding scenarios.</li>
+<li><strong>RWA <code>/testData</code> endpoints</strong>: available in
+dev mode for injecting specific entities when a scenario needs precise
+state.</li>
+</ul>
+<h2 id="isolation-rules">7.3 Isolation rules</h2>
+<p>Each test creates what it needs and cleans up after itself; no test
+depends on another test’s side effects; shared mutable state (like
+account balance) is asserted relative to a value read at test start,
+never as a hardcoded absolute.</p>
+<h2 id="pattern-adoption-order">7.4 Pattern adoption order</h2>
+<p>Start (now): POM, AAA, explicit waiting, test isolation. Next (20+
+tests): fixture factories, API seeding, tagging (<code>@smoke</code>,
+<code>@regression</code>), API client reuse. Later (100+ tests): schema
+validation, network interception, data-driven suites, visual regression.
+Add a pattern only when its pain is felt.</p>
+<h1 id="glossary">8. Glossary</h1>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Term</th>
+<th>Meaning in this project</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>AUT</td>
+<td>Application under test — here, the RWA</td>
+</tr>
+<tr class="even">
+<td>CI / CD</td>
+<td>Continuous Integration / Delivery — tests run automatically on every
+push and PR via GitHub Actions</td>
+</tr>
+<tr class="odd">
+<td>Collection</td>
+<td>A group of related Postman requests saved together and run as one
+suite</td>
+</tr>
+<tr class="even">
+<td>Contract test</td>
+<td>API test that asserts the response shape (fields, types), catching
+breaking changes before the UI does</td>
+</tr>
+<tr class="odd">
+<td>devShell</td>
+<td>Nix shell declared in <code>flake.nix</code> providing every project
+tool reproducibly</td>
+</tr>
+<tr class="even">
+<td>Environment (Postman)</td>
+<td>Named set of variables (<code>baseUrl</code>, credentials) swapped
+between local and CI runs</td>
+</tr>
+<tr class="odd">
+<td>Flaky test</td>
+<td>A test that passes and fails without code changes — almost always a
+waiting or isolation defect</td>
+</tr>
+<tr class="even">
+<td>Newman</td>
+<td>Postman’s CLI runner; replays collection JSON in CI without a
+GUI</td>
+</tr>
+<tr class="odd">
+<td>P0 / P1 / P2</td>
+<td>Priority classes: critical path / every cycle / normal</td>
+</tr>
+<tr class="even">
+<td>POM</td>
+<td>Page Object Model — a class per page encapsulating selectors and
+actions</td>
+</tr>
+<tr class="odd">
+<td>Regression suite</td>
+<td>Tests re-run after changes to prove existing behavior still
+works</td>
+</tr>
+<tr class="even">
+<td>RTM</td>
+<td>Requirements Traceability Matrix — maps requirements to test cases
+and coverage status</td>
+</tr>
+<tr class="odd">
+<td>Seed / seeding</td>
+<td>Loading known data into the database before tests (file copy for
+RWA, API calls in specs)</td>
+</tr>
+<tr class="even">
+<td>Smoke test</td>
+<td>Small fast suite proving the critical path works (P0 cases)</td>
+</tr>
+<tr class="odd">
+<td>Testware</td>
+<td>All artifacts produced for testing: this document, cases, scripts,
+data, environments</td>
+</tr>
+<tr class="even">
+<td>Vitest</td>
+<td>TypeScript test runner used for the programmatic API tests
+(describe/test/expect)</td>
+</tr>
+</tbody>
+</table>
+<h1 id="ctfl-v4.0-key-points-mapped-to-this-project">9. CTFL v4.0 Key
+Points — Mapped to This Project</h1>
+<p>The ISTQB CTFL exam rewards connecting syllabus concepts to real
+practice. Every section of this project is an example of something
+examinable.</p>
+<h2 id="chapter-1-fundamentals-of-testing">9.1 Chapter 1 — Fundamentals
+of Testing</h2>
+<ul>
+<li><strong>Test objectives</strong> vary by context: here the
+objectives are defect detection (negative API cases), confidence in the
+critical path (P0 smoke), and portfolio evidence of process.</li>
+<li><strong>Seven testing principles in action</strong>: testing shows
+presence of defects (the <code>body.token</code> failure proved an
+assumption wrong, not the app); exhaustive testing is impossible
+(prioritized P0/P1/P2 instead); early testing saves money (API contracts
+before UI automation); defect clustering (auth flows get the most
+negative cases); pesticide paradox (exploratory sessions via
+<code>type: exploratory</code> issues refresh the suite); testing is
+context dependent (RWA’s cookie auth shaped the test design);
+absence-of-errors fallacy (green tests against a wrong contract are
+worthless — verify against the real server).</li>
+<li><strong>Test process activities</strong>: planning (this document),
+analysis and design (test-case issues, RTM), implementation and
+execution (specs + CI), evaluating completion (RTM coverage rule),
+completion (archive).</li>
+<li><strong>Testware</strong>: document, issues, collections, scripts,
+environments — all version-controlled alongside code.</li>
+<li><strong>Traceability</strong>: the RTM (Section 4) links
+requirements to tests and supports coverage evaluation — a core exam
+theme.</li>
+</ul>
+<h2 id="chapter-2-testing-throughout-the-sdlc">9.2 Chapter 2 — Testing
+Throughout the SDLC</h2>
+<ul>
+<li><strong>Test levels</strong>: Vitest/Newman suites sit at
+component/integration level (API contracts); Cypress/Playwright specs at
+system level (E2E); CI ties them together per commit.</li>
+<li><strong>Test types</strong>: functional (most cases), non-functional
+(TC-020 response-time budget), regression (scheduled weekday runs),
+smoke (P0 subset).</li>
+<li><strong>Shift-left</strong>: API testing before UI automation;
+contract assertions catch breaks earlier and cheaper.</li>
+<li><strong>Maintenance testing</strong>: every RWA version bump
+(submodule update) triggers full regression via path-filtered
+workflows.</li>
+</ul>
+<h2 id="chapter-3-static-testing">9.3 Chapter 3 — Static Testing</h2>
+<ul>
+<li><strong>Reviews find defects early and cheaply</strong>: every pull
+request is a static-testing event — the broken <code>api.yml</code>
+indentation and the wrong <code>working-directory</code> key were caught
+by review before ever executing.</li>
+<li>Static analysis complements this: TypeScript compilation of spec
+files catches errors before runtime.</li>
+</ul>
+<h2 id="chapter-4-test-analysis-and-design">9.4 Chapter 4 — Test
+Analysis and Design</h2>
+<ul>
+<li><strong>Equivalence partitioning</strong>: login credentials (valid
+/ wrong password / unknown user); amounts (positive / zero /
+negative).</li>
+<li><strong>Boundary value analysis</strong>: payment amount at 0.01,
+balance exactly equal to amount, balance minus one cent (TC-014).</li>
+<li><strong>Decision tables</strong>: transaction outcomes — sufficient
+balance × pay/request × accept/reject combinations.</li>
+<li><strong>State transition testing</strong>: session states (anonymous
+→ authenticated → logged out); transaction states (pending →
+accepted/rejected).</li>
+<li><strong>Experience-based techniques</strong>: exploratory charters
+logged as <code>type: exploratory</code> issues; error guessing produced
+the empty-string-secret CI defect.</li>
+<li><strong>Black-box vs experience-based balance</strong>: catalog
+cases are specification-based; session notes feed new catalog
+entries.</li>
+</ul>
+<h2 id="chapter-5-managing-the-test-activities">9.5 Chapter 5 — Managing
+the Test Activities</h2>
+<ul>
+<li><strong>Test planning</strong>: this document is the test plan —
+scope, approach, resources, schedule via the project board.</li>
+<li><strong>Risk-based prioritization</strong>: P0/P1/P2 labels map to
+product risk; CI runs smoke on every PR and full regression
+nightly.</li>
+<li><strong>Entry and exit criteria</strong>: entry — RWA healthy
+(sanity login curl), branch green; exit — all P0 automated and passing,
+RTM has no uncovered P0/P1 rows.</li>
+<li><strong>Monitoring and control</strong>: CI run history, artifacts
+(reports, screenshots, traces), and board velocity.</li>
+<li><strong>Configuration management</strong>: everything versioned —
+code, tests, environments, flake.lock pinning the toolchain.</li>
+<li><strong>Defect management</strong>: <code>type: bug-found</code>
+issues with reproduction steps, severity via priority labels, lifecycle
+on the board.</li>
+</ul>
+<h2 id="chapter-6-test-tools">9.6 Chapter 6 — Test Tools</h2>
+<ul>
+<li><strong>Tool selection rationale</strong> lives in the framework
+decision matrix (guide §2.1): each tool was chosen for a purpose, not
+habit — a K2 exam favorite (“benefits and risks of test
+automation”).</li>
+<li><strong>Automation risks demonstrated honestly</strong>: initial
+over-reliance on assumed contracts (token that did not exist) and flaky
+timing (RWA startup race) — both classic automation pitfalls named in
+the syllabus.</li>
+<li><strong>Pilot first</strong>: the auth domain was automated
+end-to-end before scaling to transactions — the recommended
+tool-introduction approach.</li>
+</ul>
+<h1 id="appendix-quick-reference">10. Appendix — Quick Reference</h1>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Environment</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">nix</span> develop</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> apps/rwa <span class="kw">&amp;&amp;</span> <span class="ex">yarn</span> install <span class="at">--legacy-peer-deps</span> <span class="kw">&amp;&amp;</span> <span class="ex">yarn</span> start   <span class="co"># reset state on every start</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="ex">yarn</span> start:empty                                                <span class="co"># empty database</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># API testing</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> api/newman/run-all.sh        <span class="co"># Postman collections (skips gracefully)</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> api <span class="kw">&amp;&amp;</span> <span class="ex">npm</span> test                <span class="co"># Vitest programmatic tests</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Web E2E</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> web/cypress <span class="kw">&amp;&amp;</span> <span class="ex">npx</span> cypress run</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> web/playwright <span class="kw">&amp;&amp;</span> <span class="ex">npx</span> playwright test</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="ex">pytest</span> web/selenium/tests/ <span class="at">-v</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Android</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> android <span class="kw">&amp;&amp;</span> <span class="ex">./gradlew</span> connectedAndroidTest</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Git workflow (master is protected)</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout <span class="at">-b</span> feat/<span class="op">&lt;</span>topic<span class="op">&gt;</span> <span class="kw">&amp;&amp;</span> <span class="fu">git</span> push <span class="at">-u</span> origin feat/<span class="op">&lt;</span>topic<span class="op">&gt;</span>  # then open a PR</span></code></pre></div>
+<p>References: Cypress Real World App
+(github.com/cypress-io/cypress-realworld-app) · Postman Learning Center
+(learning.postman.com) · Newman (github.com/postmanlabs/newman) ·
+Playwright docs (playwright.dev) · Cypress docs (docs.cypress.io) ·
+ISTQB CTFL v4.0 syllabus (istqb.org) · QA Atelier repository
+(github.com/tom-xs/qa-atelier)</p>
+
+</body>
+</html>

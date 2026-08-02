@@ -77,7 +77,7 @@ docpart: "QA Atelier · Document 2 of 3"
 | **Requirement** | REQ-AUTH-002 |
 | **Priority / Type** | P0 / Smoke, Negative |
 | **Framework** | Cypress |
-| **Issue** | qa-atelier #8 · Status: documented, not yet automated |
+| **Issue** | qa-atelier #8 · Status: partially automated — error-message assertion exists in `web/cypress/e2e/rwa/auth.cy.ts`; remaining: stays-on-`/signin` and no-cookie assertions |
 
 **Preconditions**
 
@@ -111,7 +111,7 @@ docpart: "QA Atelier · Document 2 of 3"
 
 | Request | Assertions |
 |---|---|
-| POST /login (valid) | 200; `user.id` non-empty string; `user.username` matches; `connect.sid` cookie present (`pm.cookies.has`); response time < 500 ms; chain `userId` into environment |
+| POST /login (valid) | 200; `user.id` non-empty string; `user.username` matches; `connect.sid` cookie present (`pm.cookies.has`); chain `userId` into environment |
 | POST /login (bad password) | 401; error message in body |
 | GET /users | 200 with session cookie (jar handles it); `results` is an array |
 | GET /users/{{userId}} | 200; profile matches logged-in user |
@@ -119,6 +119,42 @@ docpart: "QA Atelier · Document 2 of 3"
 **Environment** `ci.postman_environment.json`: `baseUrl=http://localhost:3001`, `username=Heath93`, `password` initial value `{{RWA_PASS}}` (real value only in current value / CI secret), empty `userId`.
 
 **Done when:** collection and environment exported to `api/`; `bash api/newman/run-all.sh` green locally and in CI.
+
+**Scope note:** the login response-time budget (< 500 ms) is intentionally **not** asserted here — it is owned by TC-020, so the budget check lives in exactly one case.
+
+## 2.6 TC-021 — Client-side login validation blocks empty submission
+
+| | |
+|---|---|
+| **Requirements** | REQ-AUTH-001, REQ-AUTH-002 |
+| **Priority / Type** | P2 / Functional — client-side validation |
+| **Framework** | Cypress |
+| **Issue** | qa-atelier #31 · Status: automated |
+
+**Preconditions:** RWA at http://localhost:3000; no input entered yet.
+
+**Steps:** open the sign-in page; verify no error/helper text before interaction; click **Sign In** with both fields empty.
+
+**Expected result:** no error shown by default; submission blocked (no request reaches `POST /login`); helper text appears under the empty required fields.
+
+**Automation:** covered by `blocks login with empty fields` and `doesn't display error message by default` in `web/cypress/e2e/rwa/auth.cy.ts`. Known defect in the current code: `.find("username-helper-text")` is not a valid CSS selector — should be `.find("#username-helper-text")`; fix during the TC-tagging refactor.
+
+## 2.7 TC-022 — Log in with valid credentials via the UI
+
+| | |
+|---|---|
+| **Requirement** | REQ-AUTH-001 |
+| **Priority / Type** | P1 / Functional — Smoke, positive path |
+| **Framework** | Cypress |
+| **Issue** | qa-atelier #30 · Status: automated |
+
+**Preconditions:** RWA at http://localhost:3000; seeded user `Heath93` / `s3cret`; credentials via `CYPRESS_RWA_USER` / `CYPRESS_RWA_PASS`.
+
+**Steps:** open the sign-in page; enter valid credentials; click **Sign In**.
+
+**Expected result:** redirect to `/`; authenticated UI renders (notifications indicator in the top nav); `connect.sid` cookie set.
+
+**Automation:** covered by `logs in successfully with valid credentials` in `web/cypress/e2e/rwa/auth.cy.ts`. Complements the ID-less Vitest auth suite (§2.5), which covers REQ-AUTH-001 at the API layer.
 
 ## 2.5 Vitest auth suite — automated
 
