@@ -1,4 +1,3 @@
-import { assert } from "chai";
 import { RWAHomePage } from "../../pages/rwa/RwaHomePage";
 import { RwaLoginPage } from "../../pages/rwa/RwaLoginPage";
 import { RwaTransactionPage } from "../../pages/rwa/RwaTransactionPage";
@@ -13,10 +12,10 @@ describe("RWA — Transaction", () => {
     const password = Cypress.env("RWA_PASS");
 
     if (typeof username !== "string" || username.length === 0) {
-      throw new Error("CYPRESS_RWA_USER is required to run RWA auth tests.");
+      throw new Error("RWA_USER is required to run RWA auth tests.");
     }
     if (typeof password !== "string" || password.length === 0) {
-      throw new Error("CYPRESS_RWA_PASS is required to run RWA auth tests.");
+      throw new Error("RWA_PASS is required to run RWA auth tests.");
     }
 
     return { username, password };
@@ -28,20 +27,24 @@ describe("RWA — Transaction", () => {
     loginPage.login(username, password);
   });
 
-  it("Is able to make a valid transaction", () => {
+  it("user is able to make a valid transaction", () => {
     // Arrange
     const targetContact = "Dina20";
-    const transactionAmount = "$100";
+    const transactionAmount = "100";
+    const displayedAmount = "$100.00";
     const transactionMsg = "Test Transaction";
-    homePage.clickTransactionButton();
 
     // Act
-    transactionPage.selectContact(targetContact);
-    transactionPage.defineTransaction(transactionAmount, transactionMsg);
-    transactionPage.clickPayButton();
-    transactionPage.clickReturnToTransactions();
+    homePage
+      .startTransaction()
+      .selectContact(targetContact)
+      .defineTransaction(transactionAmount, transactionMsg)
+      .clickPayButton()
+      .clickReturnToTransactionsBtn();
 
     // Assert
-    transactionPage.searchTransaction(transactionAmount, transactionMsg);
+    transactionPage
+      .getTransactionItem(displayedAmount, transactionMsg)
+      .should("exist");
   });
 });

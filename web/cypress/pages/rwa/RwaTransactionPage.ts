@@ -2,6 +2,7 @@ export class RwaTransactionPage {
   selectContact(username: string) {
     cy.getBySel("user-list-search-input").type(username);
     cy.getBySelLike("user-list-item-").contains(username).click();
+    return this;
   }
 
   defineTransaction(amount: string, note: string) {
@@ -9,28 +10,31 @@ export class RwaTransactionPage {
     cy.getBySel("transaction-create-description-input")
       .find("input")
       .type(note);
+    return this;
   }
 
-  searchTransaction(amount: string, note: string) {
-    cy.getBySel("transaction-list")
-      .getBySelLike("transaction-item-")
-      .filter(`:contains("${amount}"):contains("${note}")`)
-      .should("exist");
+  getTransactionItem(amount: string, note: string) {
+    return cy
+      .getBySel("transaction-list")
+      .find('[data-test^="transaction-item-"]')
+      .filter(`:contains("${amount}"):contains("${note}")`);
   }
 
-  clickRequestButton() {
+  clickRequestBtn() {
     cy.getBySel("transaction-create-submit-request").click();
   }
 
   clickPayButton() {
     cy.getBySel("transaction-create-submit-payment").click();
+    return this;
   }
 
-  clickReturnToTransactions() {
+  clickReturnToTransactionsBtn() {
     cy.getBySel("new-transaction-return-to-transactions").click();
   }
 
-  clickNewTransactionButton() {
+  clickNewTransactionBtn() {
     cy.getBySel("new-transaction-create-another-transaction").click();
+    return this;
   }
 }
