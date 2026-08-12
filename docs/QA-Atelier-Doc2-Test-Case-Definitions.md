@@ -20,7 +20,7 @@ docpart: "QA Atelier · Document 2 of 3"
 | **Requirement** | REQ-TX-001 |
 | **Priority / Type** | P1 / Functional |
 | **Framework** | Cypress |
-| **Issue** | qa-atelier #6 · Status: documented, not yet automated |
+| **Issue** | qa-atelier #6 · Status: partially automated — feed assertion exists in `web/cypress/e2e/rwa/transaction.cy.ts`; remaining: success alert and sender/receiver balance delta assertions |
 
 **Preconditions**
 
