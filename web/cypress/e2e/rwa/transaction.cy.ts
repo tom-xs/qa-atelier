@@ -2,7 +2,7 @@ import { RWAHomePage } from "../../pages/rwa/RwaHomePage";
 import { RwaLoginPage } from "../../pages/rwa/RwaLoginPage";
 import { RwaTransactionPage } from "../../pages/rwa/RwaTransactionPage";
 
-describe("RWA — Transaction", () => {
+describe("[REQ-TX-001] RWA — Transaction", () => {
   const loginPage = new RwaLoginPage();
   const homePage = new RWAHomePage();
   const transactionPage = new RwaTransactionPage();
@@ -27,24 +27,42 @@ describe("RWA — Transaction", () => {
     loginPage.login(username, password);
   });
 
-  it("user is able to make a valid transaction", () => {
+  it("[TC-002] Create a payment transaction", () => {
     // Arrange
     const targetContact = "Dina20";
     const transactionAmount = "100";
     const displayedAmount = "$100.00";
     const transactionMsg = "Test Transaction";
+    cy.getBySel("sidenav-user-balance")
+      .invoke("text")
+      .then((balanceText) => {
+        const initialBalance = parseFloat(balanceText.replace(/[$,]/g, ""));
+        // Act
+        homePage
+          .startTransaction()
+          .selectContact(targetContact)
+          .defineTransaction(transactionAmount, transactionMsg)
+          .clickPayButton();
 
-    // Act
-    homePage
-      .startTransaction()
-      .selectContact(targetContact)
-      .defineTransaction(transactionAmount, transactionMsg)
-      .clickPayButton()
-      .clickReturnToTransactionsBtn();
+        // Assert success notification displays
+        cy.getBySel("alert-bar-success").should("exist");
 
-    // Assert
-    transactionPage
-      .getTransactionItem(displayedAmount, transactionMsg)
-      .should("exist");
+        transactionPage.clickReturnToTransactionsBtn();
+
+        // Assert transaction appears on transactions feed
+        transactionPage
+          .getTransactionItem(displayedAmount, transactionMsg)
+          .should("exist");
+
+        // Assert new balance is Initial Balance - Transaction Amount
+        cy.getBySel("sidenav-user-balance")
+          .invoke("text")
+          .then((newBalanceText) => {
+            const newBalance = parseFloat(newBalanceText.replace(/[$,]/g, ""));
+            expect(newBalance).to.equal(
+              initialBalance - Number(transactionAmount),
+            );
+          });
+      });
   });
 });
