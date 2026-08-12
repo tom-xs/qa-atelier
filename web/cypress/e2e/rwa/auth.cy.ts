@@ -1,6 +1,6 @@
 import { RwaLoginPage } from "../../pages/rwa/RwaLoginPage";
 
-describe("RWA — Authentication", () => {
+describe("[REQ-AUTH-001, REQ-AUTH-002] RWA — Authentication", () => {
   const loginPage = new RwaLoginPage();
 
   const getCredentials = () => {
@@ -21,7 +21,7 @@ describe("RWA — Authentication", () => {
     loginPage.visit();
   });
 
-  it("logs in successfully with valid credentials", () => {
+  it("[TC-022] logs in with valid credentials via the UI", () => {
     // Arrange
     const { username, password } = getCredentials();
 
@@ -30,29 +30,32 @@ describe("RWA — Authentication", () => {
 
     // Assert
     cy.location("pathname").should("eq", "/");
+    cy.getCookie("connect.sid").should("exist");
     cy.getBySel("nav-top-notifications-count").should("exist");
   });
 
-  it("shows an error for an incorrect password", () => {
+  it("[TC-004] User cannot log in with invalid credentials", () => {
     // Act
     const { username } = getCredentials();
     loginPage.login(username, "wrongpassword");
 
     // Assert
+    cy.location("href").should("contain", "/signin");
+    cy.getCookie("connect.sid").should("not.exist");
     cy.getBySel("signin-error").should("be.visible");
   });
 
-  it("blocks login with empty fields", () => {
+  it("[TC-021] Client-side login validation blocks empty submission", () => {
     // Act
     cy.getBySel("signin-submit").click();
 
     // Assert
     cy.getBySel("signin-username")
-      .find("username-helper-text")
+      .find("#username-helper-text")
       .should("not.be.empty");
   });
 
-  it("doesn't display error message by default", () => {
+  it("[TC-021] shows no error message before interaction", () => {
     // Assert
     cy.get("#username-helper-text").should("not.exist");
   });
