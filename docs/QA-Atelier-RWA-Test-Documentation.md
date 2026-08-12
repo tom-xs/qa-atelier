@@ -62,7 +62,7 @@ Test cases are managed as GitHub Issues using the `type: test-case` label and th
 | ID | Title | Requirement | Type | Priority | Framework | Status |
 |---|---|---|---|---|---|---|
 | TC-001 | Log in with valid credentials (UI) | REQ-AUTH-001 | Smoke | P0 | Cypress | Retired — covered by API tests |
-| TC-002 | Create a payment transaction | REQ-TX-001 | Functional | P1 | Cypress | Documented (issue #6) |
+| TC-002 | Create a payment transaction | REQ-TX-001 | Functional | P1 | Cypress | Partially automated (issue #6 — feed assertion in `transaction.cy.ts`) |
 | TC-003 | Request money from another user | REQ-TX-002 | Functional | P1 | Cypress | Documented (issue #7) |
 | TC-004 | User cannot log in with invalid credentials | REQ-AUTH-002 | Smoke / Negative | P0 | Cypress | Partially automated (issue #8 — error-message check in `auth.cy.ts`) |
 | TC-005 | RWA API auth collection + CI environment | REQ-AUTH-001, REQ-AUTH-002 | API Contract | P1 | Postman / Newman | Documented (issue #12) |
@@ -109,7 +109,7 @@ Coverage key: **A** = automated (passing spec in CI), **D** = documented (issue 
 | REQ-BANK-001 | TC-009 | P | Write Cypress spec |
 | REQ-BANK-002 | TC-010 | P | Add to Postman collection |
 | REQ-BANK-003 | — | — | Add test case (P2) |
-| REQ-TX-001 | TC-002, TC-019 | D | Automate TC-002 in Cypress |
+| REQ-TX-001 | TC-002, TC-019 | **A** (partial) | Extend TC-002 assertions: success alert + balance deltas (feed assertion automated in `transaction.cy.ts`) |
 | REQ-TX-002 | TC-003 | D | Automate TC-003 in Cypress |
 | REQ-TX-003 | TC-011 | P | Write Cypress spec |
 | REQ-TX-004 | TC-012, TC-013 | P | Write Cypress specs |
@@ -118,7 +118,7 @@ Coverage key: **A** = automated (passing spec in CI), **D** = documented (issue 
 | REQ-NOTIF-001 | TC-016 | P | Write Cypress spec |
 | REQ-NOTIF-002 | — | — | Add test case (P2) |
 
-**Coverage summary (2026-08-02):** 19 requirements — 3 with automated coverage, 2 documented, 11 planned, 3 with no test case yet (all P2). TC-021 and TC-022 were raised retroactively to trace auth UI tests already coded in `web/cypress/e2e/rwa/auth.cy.ts`. Rule: no requirement ships to "Done" with an **—** in this matrix; P0/P1 rows must reach **A** before the project is considered complete.
+**Coverage summary (2026-08-02):** 19 requirements — 4 with automated coverage (REQ-TX-001 partial: feed assertion only, balance/alert checks pending), 1 documented, 11 planned, 3 with no test case yet (all P2). TC-021 and TC-022 were raised retroactively to trace auth UI tests already coded in `web/cypress/e2e/rwa/auth.cy.ts`. Incidental exercising does not count as coverage: `transaction.cy.ts` logs in during setup, but REQ-AUTH-001/REQ-TX-003 are only covered by their dedicated cases. Rule: no requirement ships to "Done" with an **—** in this matrix; P0/P1 rows must reach **A** before the project is considered complete.
 
 # 5. Environment Setup
 
