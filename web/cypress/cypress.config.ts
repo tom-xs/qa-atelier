@@ -8,5 +8,8 @@ export default defineConfig({
     fixturesFolder: "fixtures",
     screenshotsFolder: "screenshots",
     videosFolder: "videos",
+    env: {
+      API_URL: "http://localhost:3001",
+    },
   },
 });

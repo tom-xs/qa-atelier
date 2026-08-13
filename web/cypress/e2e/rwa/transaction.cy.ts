@@ -6,6 +6,7 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
   const loginPage = new RwaLoginPage();
   const homePage = new RWAHomePage();
   const transactionPage = new RwaTransactionPage();
+  const apiUrl = Cypress.env("API_URL") || "http://localhost:3001";
 
   const getCredentials = () => {
     const username = Cypress.env("RWA_USER");
@@ -37,6 +38,11 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
       .invoke("text")
       .then((balanceText) => {
         const initialBalance = parseFloat(balanceText.replace(/[$,]/g, ""));
+
+        cy.intercept("GET", `${apiUrl}/transactions/public*`).as(
+          "transactionsFeed",
+        );
+
         // Act
         homePage
           .startTransaction()
@@ -45,9 +51,11 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
           .clickPayButton();
 
         // Assert success notification displays
-        cy.getBySel("alert-bar-success").should("exist");
+        cy.getBySel("alert-bar-success").should("be.visible");
 
         transactionPage.clickReturnToTransactionsBtn();
+
+        cy.wait("@transactionsFeed");
 
         // Assert transaction appears on transactions feed
         transactionPage
@@ -57,7 +65,7 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
         // Assert new balance is Initial Balance - Transaction Amount
         cy.getBySel("sidenav-user-balance")
           .invoke("text")
-          .then((newBalanceText) => {
+          .should((newBalanceText) => {
             const newBalance = parseFloat(newBalanceText.replace(/[$,]/g, ""));
             expect(newBalance).to.equal(
               initialBalance - Number(transactionAmount),

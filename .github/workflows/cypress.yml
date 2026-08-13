@@ -68,7 +68,9 @@ jobs:
         run: echo "No Cypress specs found yet, skipping."
 
       - uses: actions/upload-artifact@v4
-        if: failure() && steps.check.outputs.count > 0
+        if: always() && steps.check.outputs.count > 0
         with:
           name: cypress-screenshots-${{ matrix.browser }}
-          path: web/cypress/cypress/screenshots/
+          path: |
+            web/cypress/screenshots/
+            web/cypress/videos/
