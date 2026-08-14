@@ -32,6 +32,7 @@ export class RwaTransactionPage {
 
   clickReturnToTransactionsBtn() {
     cy.getBySel("new-transaction-return-to-transactions").click();
+    return this;
   }
 
   clickNewTransactionBtn() {
