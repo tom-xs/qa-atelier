@@ -1,4 +1,5 @@
 import { RWAHomePage } from "./RwaHomePage";
+import { RWANotificationPage } from "./RwaNotificationPage";
 
 export class RwaLoginPage {
   visit() {
@@ -15,6 +16,11 @@ export class RwaLoginPage {
 
   submit() {
     cy.getBySel("signin-submit").click();
+  }
+
+  openNotifications() {
+    cy.getBySel("nav-top-notifications-link").click();
+    return new RWANotificationPage();
   }
 
   login(username: string, password: string) {

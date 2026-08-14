@@ -8,7 +8,20 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
   const transactionPage = new RwaTransactionPage();
   const apiUrl = Cypress.env("API_URL") || "http://localhost:3001";
 
-  const getCredentials = () => {
+  const getTargetUserCredentials = () => {
+    const username = Cypress.env("RWA_TARGET_USER");
+    const password = Cypress.env("RWA_TARGET_PASS");
+
+    if (typeof username !== "string" || username.length === 0) {
+      throw new Error("RWA_TARGET_USER is required to run RWA auth tests.");
+    }
+    if (typeof password !== "string" || password.length === 0) {
+      throw new Error("RWA_TARGET_PASS is required to run RWA auth tests.");
+    }
+
+    return { username, password };
+  };
+  const getUserCredentials = () => {
     const username = Cypress.env("RWA_USER");
     const password = Cypress.env("RWA_PASS");
 
@@ -24,7 +37,7 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
 
   beforeEach(() => {
     loginPage.visit();
-    const { username, password } = getCredentials();
+    const { username, password } = getUserCredentials();
     loginPage.login(username, password);
   });
 
@@ -71,6 +84,49 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
               initialBalance - Number(transactionAmount),
             );
           });
+      });
+  });
+
+  it("[TC-003] Request money from another user", () => {
+    // Arrange
+    const { username: targetUserAccount, password: targetUserPassword } =
+      getTargetUserCredentials();
+    const transactionAmount = "100";
+    const displayedAmount = "$100.00";
+    const transactionMsg = "Test Transaction";
+
+    cy.getBySel("sidenav-user-full-name")
+      .invoke("text")
+      .then((userName) => {
+        cy.intercept("GET", `${apiUrl}/transactions/public*`).as("requestMade");
+
+        // Act
+        homePage
+          .startTransaction()
+          .selectContact(targetUserAccount)
+          .defineTransaction(transactionAmount, transactionMsg)
+          .clickRequestBtn();
+
+        // Assert success notification displays
+        cy.getBySel("alert-bar-success").should("be.visible");
+
+        transactionPage.clickReturnToTransactionsBtn();
+
+        cy.wait("@requestMade");
+
+        // Assert transaction request appears on transactions feed
+        transactionPage
+          .getTransactionItem(displayedAmount, transactionMsg)
+          .should("exist");
+
+        // Assert notification appears on requested user account
+        homePage.logout();
+        loginPage
+          .login(targetUserAccount, targetUserPassword)
+          .openNotifications();
+        cy.get("[data-test=notifications-list]")
+          .find(`:contains("${userName}"):contains("requested payment")`)
+          .should("be.visible");
       });
   });
 });
