@@ -22,6 +22,7 @@ export class RwaTransactionPage {
 
   clickRequestBtn() {
     cy.getBySel("transaction-create-submit-request").click();
+    return this;
   }
 
   clickPayButton() {
