@@ -79,9 +79,10 @@ Coverage key: **A** = automated (passing spec in CI) · **D** = documented (issu
 
 | Requirement | Test cases | Coverage | Gap / next action |
 |---|---|---|---|
+<<<<<<< HEAD
 | REQ-AUTH-001 | TC-001 (retired), TC-005, TC-022, Vitest auth suite | **A** | — |
 | REQ-AUTH-002 | TC-004, TC-005, TC-021, Vitest auth suite | **A** | — |
-| REQ-AUTH-003 | TC-006 | P | Write Cypress spec |
+| REQ-AUTH-003 | TC-006 | **A** | — |
 | REQ-AUTH-004 | TC-007 | P | Write Cypress spec |
 | REQ-AUTH-005 | TC-008, Vitest auth suite (cookie reuse) | **A** (API level) | UI-level check in TC-008 |
 | REQ-USER-001 | TC-017 | P | Write Vitest spec for `/users/search` |
@@ -99,7 +100,8 @@ Coverage key: **A** = automated (passing spec in CI) · **D** = documented (issu
 | REQ-NOTIF-001 | TC-016 | P | Write Cypress spec |
 | REQ-NOTIF-002 | — | — | Add test case (P2) |
 
-**Coverage summary (2026-08-26):** 19 requirements — 4 with automated coverage (REQ-AUTH-001 and REQ-AUTH-002 now fully automated via TC-005; REQ-TX-001 partial: feed assertion only, balance/alert checks pending), 1 documented, 11 planned, 3 with no test case yet (all P2). TC-021 and TC-022 were raised retroactively to trace auth UI tests that were already coded in `web/cypress/e2e/rwa/auth.cy.ts`. Incidental exercising does not count as coverage: `transaction.cy.ts` logs in during setup, but REQ-AUTH-001/REQ-TX-003 are only covered by their dedicated cases.
+<<<<<<< HEAD
+**Coverage summary (2026-08-26):** 19 requirements — 5 with automated coverage (REQ-AUTH-001, REQ-AUTH-002 and REQ-AUTH-003 now fully automated; REQ-TX-001 partial: feed assertion only, balance/alert checks pending), 1 documented, 10 planned, 3 with no test case yet (all P2). TC-021 and TC-022 were raised retroactively to trace auth UI tests that were already coded in `web/cypress/e2e/rwa/auth.cy.ts`. Incidental exercising does not count as coverage: `transaction.cy.ts` logs in during setup, but REQ-AUTH-001/REQ-TX-003 are only covered by their dedicated cases.
 
 # 4. Maintenance Rules
 
