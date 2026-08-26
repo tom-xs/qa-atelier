@@ -1,0 +1,154 @@
+{
+  "info": {
+    "_postman_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+    "name": "rwa-bank-accounts",
+    "description": "TC-010 — Bank accounts list shows linked accounts. Validates the shape and content of the bank accounts list endpoint.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "POST /login (valid)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const userId = pm.response.json().user.id;",
+              "pm.environment.set('userId', userId);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET /bankaccounts list",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response has results array', function () {",
+              "  const jsonData = pm.response.json();",
+              "  pm.expect(jsonData.results).to.be.an('array');",
+              "});",
+              "",
+              "pm.test('Each bank account has required schema fields', function () {",
+              "  const jsonData = pm.response.json();",
+              "  const requiredFields = ['id', 'uuid', 'userId', 'bankName', 'accountNumber', 'routingNumber', 'isDeleted', 'createdAt', 'modifiedAt'];",
+              "  jsonData.results.forEach(function (account) {",
+              "    requiredFields.forEach(function (field) {",
+              "      pm.expect(account).to.have.property(field);",
+              "    });",
+              "    pm.expect(account.id).to.be.a('string').that.is.not.empty;",
+              "    pm.expect(account.userId).to.be.a('string').that.is.not.empty;",
+              "    pm.expect(account.bankName).to.be.a('string').that.is.not.empty;",
+              "    pm.expect(account.accountNumber).to.be.a('string').that.is.not.empty;",
+              "    pm.expect(account.routingNumber).to.be.a('string').that.is.not.empty;",
+              "  });",
+              "});",
+              "",
+              "pm.test('Listed accounts belong to the logged-in user and are not deleted', function () {",
+              "  const jsonData = pm.response.json();",
+              "  const userId = pm.environment.get('userId');",
+              "  jsonData.results.forEach(function (account) {",
+              "    pm.expect(account.userId).to.eql(userId);",
+              "    pm.expect(account.isDeleted).to.eql(false);",
+              "  });",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/bankaccounts",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "bankaccounts"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001"
+    },
+    {
+      "key": "username",
+      "value": "Heath93"
+    },
+    {
+      "key": "password",
+      "value": "{{RWA_PASS}}"
+    },
+    {
+      "key": "userId",
+      "value": ""
+    }
+  ]
+}

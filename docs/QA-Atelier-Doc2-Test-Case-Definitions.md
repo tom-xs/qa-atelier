@@ -396,12 +396,39 @@ Credentials from `RWA_USER` / `RWA_PASS` env vars with `||` fallback to public s
 
 **Automation:** covered by collection `api/collections/rwa-transactions.postman_collection.json`, run by `bash api/newman/run-all.sh`. The collection logs in, asserts the list schema, then asserts the detail schema for the first returned transaction.
 
+## 2.15 TC-010 — Bank accounts list shows linked accounts
+
+| | |
+|---|---|
+| **Requirement** | REQ-BANK-002 |
+| **Priority / Type** | P1 / Functional |
+| **Framework** | Postman / Newman |
+| **Issue** | qa-atelier #17 · Status: automated |
+
+**Preconditions**
+
+- RWA API is running at http://localhost:3001
+- Seeded user Heath93 exists with at least one linked bank account
+
+**Steps**
+
+1. `POST /login` as Heath93
+2. `GET /bankaccounts`
+
+**Expected result**
+
+- `GET /bankaccounts` returns 200 with a `results` array
+- Every account has the required fields: `id`, `uuid`, `userId`, `bankName`, `accountNumber`, `routingNumber`, `isDeleted`, `createdAt`, `modifiedAt`
+- Every returned account belongs to the logged-in user (`userId` matches)
+- No returned account is marked as deleted (`isDeleted` is `false`)
+
+**Automation:** covered by collection `api/collections/rwa-bank-accounts.postman_collection.json`, run by `bash api/newman/run-all.sh`.
+
 # 3. Planned Test Cases
 
 | ID | Title | Requirement | Type | Priority | Target framework |
 |---|---|---|---|---|---|
 | TC-008 | Session persists across reload | REQ-AUTH-005 | Functional | P1 | Playwright |
-| TC-010 | Bank accounts list shows linked accounts | REQ-BANK-002 | Functional | P1 | Postman / Newman |
 | TC-013 | Recipient rejects a money request | REQ-TX-004 | Negative | P2 | Cypress |
 | TC-015 | Like and comment on a transaction | REQ-TX-005 | Functional | P2 | Cypress |
 | TC-017 | User search returns matching users | REQ-USER-001 | Functional | P2 | Vitest (API) |
