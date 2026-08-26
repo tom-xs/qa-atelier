@@ -20,7 +20,7 @@ docpart: "QA Atelier · Document 2 of 3"
 | **Requirement** | REQ-TX-001 |
 | **Priority / Type** | P1 / Functional |
 | **Framework** | Cypress |
-| **Issue** | qa-atelier #6 · Status: partially automated — feed assertion exists in `web/cypress/e2e/rwa/transaction.cy.ts`; remaining: success alert and sender/receiver balance delta assertions |
+| **Issue** | qa-atelier #6 · Status: automated — success alert, feed presence, and sender/receiver balance deltas all asserted in `web/cypress/e2e/rwa/transaction.cy.ts` |
 
 **Preconditions**
 
@@ -49,7 +49,7 @@ docpart: "QA Atelier · Document 2 of 3"
 | **Requirement** | REQ-TX-002 |
 | **Priority / Type** | P1 / Functional |
 | **Framework** | Cypress |
-| **Issue** | qa-atelier #7 · Status: documented, not yet automated |
+| **Issue** | qa-atelier #7 · Status: automated in `web/cypress/e2e/rwa/transaction.cy.ts` — success alert, feed presence, and recipient notification asserted |
 
 **Preconditions**
 
@@ -77,7 +77,7 @@ docpart: "QA Atelier · Document 2 of 3"
 | **Requirement** | REQ-TX-004 |
 | **Priority / Type** | P1 / Functional |
 | **Framework** | Cypress |
-| **Issue** | qa-atelier #15 · Status: automated |
+| **Issue** | qa-atelier #24 · Status: automated |
 
 **Preconditions**
 
@@ -99,7 +99,7 @@ docpart: "QA Atelier · Document 2 of 3"
 - Heath93's balance increases by the requested amount
 - The completed payment appears in the transaction feed
 
-**Automation:** covered by `[TC-012] Recipient accepts a money request` in `web/cypress/e2e/rwa/transaction.cy.ts`. The test reuses the request-creation flow from TC-003, captures the transaction id from the feed, opens the detail view as the recipient, clicks `transaction-accept-request-<id>`, asserts the status changed to "charged", and verifies both users' balance deltas after re-logging in.
+**Automation:** covered by `[TC-012] Recipient accepts a money request` in `web/cypress/e2e/rwa/transaction.cy.ts`. The test reuses the request-creation flow from TC-003, captures the transaction id from the feed, opens the detail view as the recipient, clicks `transaction-accept-request-<id>`, asserts the status changed to "charged", and verifies both users' balance deltas after re-logging in. The narrowly-scoped `uncaught:exception` suppression for the feed's XState init race masks a real app defect — tracked as qa-atelier #45, to be removed once fixed.
 
 ## 2.3 TC-004 — User cannot log in with invalid credentials
 
@@ -108,7 +108,7 @@ docpart: "QA Atelier · Document 2 of 3"
 | **Requirement** | REQ-AUTH-002 |
 | **Priority / Type** | P0 / Smoke, Negative |
 | **Framework** | Cypress |
-| **Issue** | qa-atelier #8 · Status: partially automated — error-message assertion exists in `web/cypress/e2e/rwa/auth.cy.ts`; remaining: stays-on-`/signin` and no-cookie assertions |
+| **Issue** | qa-atelier #8 · Status: automated — all three expected results asserted in `web/cypress/e2e/rwa/auth.cy.ts` (stays on `/signin`, error message visible, no `connect.sid` cookie) |
 
 **Preconditions**
 
@@ -168,7 +168,7 @@ docpart: "QA Atelier · Document 2 of 3"
 
 **Expected result:** no error shown by default; submission blocked (no request reaches `POST /login`); helper text appears under the empty required fields.
 
-**Automation:** covered by `blocks login with empty fields` and `doesn't display error message by default` in `web/cypress/e2e/rwa/auth.cy.ts`. Known defect in the current code: `.find("username-helper-text")` is not a valid CSS selector — should be `.find("#username-helper-text")`; fix during the TC-tagging refactor.
+**Automation:** covered by `blocks login with empty fields` and `doesn't display error message by default` in `web/cypress/e2e/rwa/auth.cy.ts` (selector fixed to `#username-helper-text` during the TC-tagging refactor).
 
 ## 2.8 TC-022 — Log in with valid credentials via the UI
 
@@ -194,7 +194,7 @@ docpart: "QA Atelier · Document 2 of 3"
 | **Requirement** | REQ-AUTH-003 |
 | **Priority / Type** | P1 / Functional |
 | **Framework** | Cypress |
-| **Issue** | qa-atelier #9 · Status: automated |
+| **Issue** | qa-atelier #18 · Status: automated |
 
 **Preconditions**
 
@@ -222,7 +222,7 @@ docpart: "QA Atelier · Document 2 of 3"
 | **Requirement** | REQ-AUTH-004 |
 | **Priority / Type** | P1 / Functional |
 | **Framework** | Cypress |
-| **Issue** | qa-atelier #10 · Status: automated |
+| **Issue** | qa-atelier #15 · Status: automated |
 
 **Preconditions**
 
@@ -236,11 +236,10 @@ docpart: "QA Atelier · Document 2 of 3"
 
 **Expected result**
 
-- User is redirected to `/` (dashboard)
-- `connect.sid` cookie is set
-- Authenticated UI renders (e.g., notifications indicator in top nav)
+- After clicking **Sign Up**, the user is redirected to `/signin` (verified behavior of the current RWA build — there is no auto-login after signup)
+- Signing in with the newly created credentials succeeds: redirect to `/`, `connect.sid` cookie set, authenticated UI renders (e.g., notifications indicator in top nav)
 
-**Automation:** covered by `[TC-007] Sign up creates a new account` in `web/cypress/e2e/rwa/signup.cy.ts`. Implementation note: the current RWA build redirects to `/signin` immediately after signup, so the spec signs in with the newly created account to prove the account exists and reaches the authenticated dashboard.
+**Automation:** covered by `[TC-007] Sign up creates a new account` in `web/cypress/e2e/rwa/signup.cy.ts`. The spec signs in with the newly created account to prove the account exists and reaches the authenticated dashboard. Username and password are generated uniquely per run (`Date.now()`), which avoids collisions across runs and keeps a hardcoded password out of the repo (flagged by GitGuardian on PR #41).
 
 ## 2.9 Vitest auth suite — automated
 
@@ -266,7 +265,7 @@ Credentials from `RWA_USER` / `RWA_PASS` env vars with `||` fallback to public s
 | **Requirement** | REQ-BANK-001 |
 | **Priority / Type** | P1 / Functional |
 | **Framework** | Cypress |
-| **Issue** | qa-atelier #13 · Status: automated |
+| **Issue** | qa-atelier #16 · Status: automated |
 
 **Preconditions**
 
@@ -294,7 +293,7 @@ Credentials from `RWA_USER` / `RWA_PASS` env vars with `||` fallback to public s
 | **Requirement** | REQ-TX-003 |
 | **Priority / Type** | P1 / Functional |
 | **Framework** | Cypress |
-| **Issue** | qa-atelier #14 · Status: automated |
+| **Issue** | qa-atelier #20 · Status: automated |
 
 **Preconditions**
 
