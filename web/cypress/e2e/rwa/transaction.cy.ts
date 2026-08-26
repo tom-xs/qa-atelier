@@ -156,4 +156,128 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
         .should("be.visible");
     });
   });
+
+  it("[TC-012] Recipient accepts a money request", () => {
+    // The RWA feed can briefly render with undefined transactions while
+    // XState machines initialise; ignore that transient uncaught exception.
+    cy.on("uncaught:exception", (err) => {
+      if (
+        err.message.includes("can't access property \"length\", transactions is undefined")
+      ) {
+        return false;
+      }
+      return true;
+    });
+
+    // Arrange
+    const { username: requesterUsername, password: requesterPassword } =
+      getUserCredentials();
+    const { username: recipientUsername, password: recipientPassword } =
+      getTargetUserCredentials();
+
+    const requestAmount = "100";
+    const displayedAmount = "$100.00";
+    const requestNote = `TC-012 request ${Date.now()}`;
+
+    cy.intercept("GET", `${apiUrl}/transactions/public*`).as("publicFeed");
+
+    // Capture requester initial balance
+    cy.getBySel("sidenav-user-balance")
+      .invoke("text")
+      .then((text) => parseFloat(text.replace(/[$,]/g, "")))
+      .as("requesterInitialBalance");
+
+    // Capture recipient initial balance
+    homePage.logout();
+    loginPage.login(recipientUsername, recipientPassword);
+    cy.getBySel("sidenav-user-balance")
+      .invoke("text")
+      .then((text) => parseFloat(text.replace(/[$,]/g, "")))
+      .as("recipientInitialBalance");
+
+    // Act: requester creates a money request
+    homePage.logout();
+    loginPage.login(requesterUsername, requesterPassword);
+
+    homePage
+      .startTransaction()
+      .selectContact(recipientUsername)
+      .defineTransaction(requestAmount, requestNote)
+      .clickRequestBtn();
+
+    // Assert request creation succeeded
+    cy.getBySel("alert-bar-success").should("be.visible");
+
+    transactionPage.clickReturnToTransactionsBtn();
+    cy.wait("@publicFeed");
+
+    // Assert the pending request appears in the feed and capture its id
+    transactionPage
+      .getTransactionItem(displayedAmount, requestNote)
+      .should("exist")
+      .invoke("attr", "data-test")
+      .then((dataTest) => {
+        const requestId = dataTest?.replace("transaction-item-", "");
+        cy.wrap(requestId).as("requestId");
+      });
+
+    // Act: recipient opens the request and accepts it
+    homePage.logout();
+    loginPage.login(recipientUsername, recipientPassword);
+    cy.location("pathname").should("eq", "/");
+
+    cy.get<string>("@requestId").then((requestId) => {
+      cy.visit(`/transaction/${requestId}`);
+      cy.getBySel("transaction-detail-header").should("be.visible");
+      cy.getBySel(`transaction-accept-request-${requestId}`)
+        .should("be.visible")
+        .click();
+    });
+
+    // Assert the request is no longer pending (accept button gone, status changed)
+    cy.get<string>("@requestId").then((requestId) => {
+      cy.getBySel(`transaction-accept-request-${requestId}`).should("not.exist");
+      cy.getBySel(`transaction-action-${requestId}`).should(
+        "contain.text",
+        "charged"
+      );
+    });
+
+    // Assert recipient balance decreased by the requested amount
+    homePage.logout();
+    loginPage.login(recipientUsername, recipientPassword);
+
+    cy.get<number>("@recipientInitialBalance").then((initialBalance) => {
+      cy.getBySel("sidenav-user-balance")
+        .invoke("text")
+        .should((newBalanceText) => {
+          const newBalance = parseFloat(newBalanceText.replace(/[$,]/g, ""));
+          expect(newBalance).to.equal(initialBalance - Number(requestAmount));
+        });
+    });
+
+    // Assert requester balance increased by the requested amount
+    homePage.logout();
+    loginPage.login(requesterUsername, requesterPassword);
+
+    cy.get<number>("@requesterInitialBalance").then((initialBalance) => {
+      cy.getBySel("sidenav-user-balance")
+        .invoke("text")
+        .should((newBalanceText) => {
+          const newBalance = parseFloat(newBalanceText.replace(/[$,]/g, ""));
+          expect(newBalance).to.equal(initialBalance + Number(requestAmount));
+        });
+    });
+
+    // Assert the completed payment appears in the feed
+    cy.visit("/");
+    cy.wait("@publicFeed");
+    cy.get<string>("@requestId").then((requestId) => {
+      cy.getBySel(`transaction-item-${requestId}`).should("exist");
+      cy.getBySel(`transaction-action-${requestId}`).should(
+        "contain.text",
+        "charged"
+      );
+    });
+  });
 });
