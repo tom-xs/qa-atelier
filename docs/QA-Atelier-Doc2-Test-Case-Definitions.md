@@ -105,7 +105,7 @@ docpart: "QA Atelier · Document 2 of 3"
 | **Requirements** | REQ-AUTH-001, REQ-AUTH-002 |
 | **Priority / Type** | P1 / API Contract |
 | **Framework** | Postman / Newman |
-| **Issue** | qa-atelier #12 · Status: documented, not yet automated |
+| **Issue** | qa-atelier #12 · Status: automated |
 
 **Collection** `rwa-auth.postman_collection.json`:
 

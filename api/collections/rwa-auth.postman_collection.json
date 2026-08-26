@@ -1,0 +1,230 @@
+{
+  "info": {
+    "_postman_id": "4eca0e6b-1409-4828-9d18-76e46b25d46d",
+    "name": "rwa-auth",
+    "description": "TC-005 — RWA API auth collection + CI environment. Validates login, session cookie propagation, and user profile endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "POST /login (valid)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('user.id is a non-empty string', function () {",
+              "  const jsonData = pm.response.json();",
+              "  pm.expect(jsonData.user).to.exist;",
+              "  pm.expect(jsonData.user.id).to.be.a('string').that.is.not.empty;",
+              "});",
+              "",
+              "pm.test('user.username matches the login username', function () {",
+              "  const jsonData = pm.response.json();",
+              "  pm.expect(jsonData.user.username).to.equal(pm.environment.get('username'));",
+              "});",
+              "",
+              "pm.test('connect.sid session cookie is present', function () {",
+              "  pm.expect(pm.cookies.has('connect.sid')).to.be.true;",
+              "});",
+              "",
+              "const userId = pm.response.json().user.id;",
+              "pm.environment.set('userId', userId);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST /login (bad password)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 401', function () {",
+              "  pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test('Response body contains an error message', function () {",
+              "  pm.expect(pm.response.text()).to.match(/Unauthorized|Incorrect username or password/i);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"wrongpassword123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET /users",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('results is an array', function () {",
+              "  const jsonData = pm.response.json();",
+              "  pm.expect(jsonData.results).to.be.an('array');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/users",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET /users/{{userId}}",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Profile matches the logged-in user', function () {",
+              "  const jsonData = pm.response.json();",
+              "  pm.expect(jsonData.user.id).to.equal(pm.environment.get('userId'));",
+              "  pm.expect(jsonData.user.username).to.equal(pm.environment.get('username'));",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/users/{{userId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users",
+            "{{userId}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001"
+    },
+    {
+      "key": "username",
+      "value": "Heath93"
+    },
+    {
+      "key": "password",
+      "value": "{{RWA_PASS}}"
+    },
+    {
+      "key": "userId",
+      "value": ""
+    }
+  ]
+}
