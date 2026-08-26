@@ -228,12 +228,39 @@ docpart: "QA Atelier · Document 2 of 3"
 
 Credentials from `RWA_USER` / `RWA_PASS` env vars with `||` fallback to public seed credentials (missing CI secrets expand to empty strings, which `??` would not catch).
 
+## 2.10 TC-009 — Link a new bank account
+
+| | |
+|---|---|
+| **Requirement** | REQ-BANK-001 |
+| **Priority / Type** | P1 / Functional |
+| **Framework** | Cypress |
+| **Issue** | qa-atelier #13 · Status: automated |
+
+**Preconditions**
+
+- RWA is running at http://localhost:3000
+- Logged in as a seeded user (e.g., Heath93)
+
+**Steps**
+
+1. Log in and navigate to `/bankaccounts` (via side nav `sidenav-bankaccounts`)
+2. Click **Create** (`bankaccount-new`)
+3. Fill bank name, routing number (9 digits), account number (9–12 digits)
+4. Click **Save** (`bankaccount-submit`)
+
+**Expected result**
+
+- User remains on `/bankaccounts`
+- The new bank account appears in the bank account list (`bankaccount-list`)
+
+**Automation:** covered by `[TC-009] Link a new bank account` in `web/cypress/e2e/rwa/bank.cy.ts`. Implementation helpers live in `RwaBankAccountPage` and `RWAHomePage#openBankAccounts` (`web/cypress/pages/rwa/`). The bank name is generated uniquely with `Test Bank ${Date.now()}` to avoid collisions across test runs.
+
 # 3. Planned Test Cases
 
 | ID | Title | Requirement | Type | Priority | Target framework |
 |---|---|---|---|---|---|
 | TC-008 | Session persists across reload | REQ-AUTH-005 | Functional | P1 | Playwright |
-| TC-009 | Link a new bank account | REQ-BANK-001 | Functional | P1 | Cypress |
 | TC-010 | Bank accounts list shows linked accounts | REQ-BANK-002 | Functional | P1 | Postman / Newman |
 | TC-011 | Feeds filter Mine / Friends / Public correctly | REQ-TX-003 | Functional | P1 | Cypress |
 | TC-012 | Recipient accepts a money request | REQ-TX-004 | Functional | P1 | Cypress |
