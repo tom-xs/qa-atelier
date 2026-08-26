@@ -154,7 +154,7 @@ docpart: "QA Atelier · Document 2 of 3"
 
 **Expected result:** redirect to `/`; authenticated UI renders (notifications indicator in the top nav); `connect.sid` cookie set.
 
-**Automation:** covered by `logs in successfully with valid credentials` in `web/cypress/e2e/rwa/auth.cy.ts`. Complements the ID-less Vitest auth suite (§2.6), which covers REQ-AUTH-001 at the API layer.
+**Automation:** covered by `logs in successfully with valid credentials` in `web/cypress/e2e/rwa/auth.cy.ts`. Complements the ID-less Vitest auth suite (§2.9), which covers REQ-AUTH-001 at the API layer.
 
 ## 2.5 TC-006 — Log out invalidates the session
 
@@ -184,7 +184,34 @@ docpart: "QA Atelier · Document 2 of 3"
 
 **Automation:** covered by `log out invalidates the session` in `web/cypress/e2e/rwa/auth.cy.ts`.
 
-## 2.6 Vitest auth suite — automated
+## 2.6 TC-007 — Sign up creates a new account
+
+| | |
+|---|---|
+| **Requirement** | REQ-AUTH-004 |
+| **Priority / Type** | P1 / Functional |
+| **Framework** | Cypress |
+| **Issue** | qa-atelier #10 · Status: automated |
+
+**Preconditions**
+
+- RWA is running at http://localhost:3000
+
+**Steps**
+
+1. Navigate to `/signup`
+2. Fill first name, last name, username, password, confirm password
+3. Click **Sign Up**
+
+**Expected result**
+
+- User is redirected to `/` (dashboard)
+- `connect.sid` cookie is set
+- Authenticated UI renders (e.g., notifications indicator in top nav)
+
+**Automation:** covered by `[TC-007] Sign up creates a new account` in `web/cypress/e2e/rwa/signup.cy.ts`. Implementation note: the current RWA build redirects to `/signin` immediately after signup, so the spec signs in with the newly created account to prove the account exists and reaches the authenticated dashboard.
+
+## 2.9 Vitest auth suite — automated
 
 | | |
 |---|---|
@@ -205,7 +232,6 @@ Credentials from `RWA_USER` / `RWA_PASS` env vars with `||` fallback to public s
 
 | ID | Title | Requirement | Type | Priority | Target framework |
 |---|---|---|---|---|---|
-| TC-007 | Sign up creates a new account | REQ-AUTH-004 | Functional | P1 | Cypress |
 | TC-008 | Session persists across reload | REQ-AUTH-005 | Functional | P1 | Playwright |
 | TC-009 | Link a new bank account | REQ-BANK-001 | Functional | P1 | Cypress |
 | TC-010 | Bank accounts list shows linked accounts | REQ-BANK-002 | Functional | P1 | Postman / Newman |
