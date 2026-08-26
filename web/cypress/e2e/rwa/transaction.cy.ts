@@ -213,10 +213,14 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
     // Act: recipient opens the request and accepts it
     homePage.logout();
     loginPage.login(recipientUsername, recipientPassword);
+    cy.location("pathname").should("eq", "/");
 
     cy.get<string>("@requestId").then((requestId) => {
       cy.visit(`/transaction/${requestId}`);
-      cy.getBySel(`transaction-accept-request-${requestId}`).click();
+      cy.getBySel("transaction-detail-header").should("be.visible");
+      cy.getBySel(`transaction-accept-request-${requestId}`)
+        .should("be.visible")
+        .click();
     });
 
     // Assert the request is no longer pending (accept button gone, status changed)
