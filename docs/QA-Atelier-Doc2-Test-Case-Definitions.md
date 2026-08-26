@@ -368,6 +368,34 @@ Credentials from `RWA_USER` / `RWA_PASS` env vars with `||` fallback to public s
 
 **Automation:** covered by `[TC-016] Notification appears for received request` in `web/cypress/e2e/rwa/notification.cy.ts`.
 
+## 2.14 TC-019 — API schema contract: `/transactions` response shape
+
+| | |
+|---|---|
+| **Requirement** | REQ-TX-001 |
+| **Priority / Type** | P1 / API Contract |
+| **Framework** | Postman / Newman |
+| **Issue** | qa-atelier #29 · Status: automated |
+
+**Preconditions**
+
+- RWA API is running at http://localhost:3001
+- Seeded user Heath93 exists
+
+**Steps**
+
+1. `POST /login` as Heath93
+2. `GET /transactions`
+3. `GET /transactions/:id` using the first transaction id from the list
+
+**Expected result**
+
+- `GET /transactions` returns 200 with `pageData` (page, limit, hasNextPages, totalPages) and a `results` array
+- Every transaction in `results` has the required fields: `id`, `uuid`, `amount`, `description`, `receiverId`, `senderId`, `privacyLevel`, `status`, `createdAt`, `modifiedAt`
+- `GET /transactions/:id` returns 200 with a `transaction` object containing the same required fields
+
+**Automation:** covered by collection `api/collections/rwa-transactions.postman_collection.json`, run by `bash api/newman/run-all.sh`. The collection logs in, asserts the list schema, then asserts the detail schema for the first returned transaction.
+
 # 3. Planned Test Cases
 
 | ID | Title | Requirement | Type | Priority | Target framework |
@@ -378,7 +406,6 @@ Credentials from `RWA_USER` / `RWA_PASS` env vars with `||` fallback to public s
 | TC-015 | Like and comment on a transaction | REQ-TX-005 | Functional | P2 | Cypress |
 | TC-017 | User search returns matching users | REQ-USER-001 | Functional | P2 | Vitest (API) |
 | TC-018 | Update account settings persists | REQ-USER-003 | Functional | P2 | Playwright |
-| TC-019 | API schema contract: `/transactions` response shape | REQ-TX-001 | API Contract | P1 | Postman / Newman |
 | TC-020 | Response-time budget: login under 500 ms | REQ-AUTH-001 | Non-functional | P2 | Postman / Newman |
 
 **Coverage gaps (no test case yet, all P2):** REQ-USER-002 (view public profile), REQ-BANK-003 (delete bank account), REQ-NOTIF-002 (dismiss notifications).
