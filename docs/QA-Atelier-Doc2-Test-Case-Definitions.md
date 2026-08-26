@@ -122,7 +122,7 @@ docpart: "QA Atelier · Document 2 of 3"
 
 **Scope note:** the login response-time budget (< 500 ms) is intentionally **not** asserted here — it is owned by TC-020, so the budget check lives in exactly one case.
 
-## 2.6 TC-021 — Client-side login validation blocks empty submission
+## 2.7 TC-021 — Client-side login validation blocks empty submission
 
 | | |
 |---|---|
@@ -139,7 +139,7 @@ docpart: "QA Atelier · Document 2 of 3"
 
 **Automation:** covered by `blocks login with empty fields` and `doesn't display error message by default` in `web/cypress/e2e/rwa/auth.cy.ts`. Known defect in the current code: `.find("username-helper-text")` is not a valid CSS selector — should be `.find("#username-helper-text")`; fix during the TC-tagging refactor.
 
-## 2.7 TC-022 — Log in with valid credentials via the UI
+## 2.8 TC-022 — Log in with valid credentials via the UI
 
 | | |
 |---|---|
@@ -154,9 +154,37 @@ docpart: "QA Atelier · Document 2 of 3"
 
 **Expected result:** redirect to `/`; authenticated UI renders (notifications indicator in the top nav); `connect.sid` cookie set.
 
-**Automation:** covered by `logs in successfully with valid credentials` in `web/cypress/e2e/rwa/auth.cy.ts`. Complements the ID-less Vitest auth suite (§2.5), which covers REQ-AUTH-001 at the API layer.
+**Automation:** covered by `logs in successfully with valid credentials` in `web/cypress/e2e/rwa/auth.cy.ts`. Complements the ID-less Vitest auth suite (§2.6), which covers REQ-AUTH-001 at the API layer.
 
-## 2.5 Vitest auth suite — automated
+## 2.5 TC-006 — Log out invalidates the session
+
+| | |
+|---|---|
+| **Requirement** | REQ-AUTH-003 |
+| **Priority / Type** | P1 / Functional |
+| **Framework** | Cypress |
+| **Issue** | qa-atelier #9 · Status: automated |
+
+**Preconditions**
+
+- RWA is running at http://localhost:3000
+- Seeded user Heath93 exists
+
+**Steps**
+
+1. Log in as Heath93
+2. Click the sign-out button in the side nav
+3. Try to visit the dashboard (`/`) or another authenticated route
+
+**Expected result**
+
+- User is redirected to `/signin`
+- `connect.sid` cookie no longer exists
+- A protected page cannot be accessed without re-logging in
+
+**Automation:** covered by `log out invalidates the session` in `web/cypress/e2e/rwa/auth.cy.ts`.
+
+## 2.6 Vitest auth suite — automated
 
 | | |
 |---|---|
@@ -177,7 +205,6 @@ Credentials from `RWA_USER` / `RWA_PASS` env vars with `||` fallback to public s
 
 | ID | Title | Requirement | Type | Priority | Target framework |
 |---|---|---|---|---|---|
-| TC-006 | Log out invalidates the session | REQ-AUTH-003 | Functional | P1 | Cypress |
 | TC-007 | Sign up creates a new account | REQ-AUTH-004 | Functional | P1 | Cypress |
 | TC-008 | Session persists across reload | REQ-AUTH-005 | Functional | P1 | Playwright |
 | TC-009 | Link a new bank account | REQ-BANK-001 | Functional | P1 | Cypress |
