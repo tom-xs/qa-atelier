@@ -256,13 +256,40 @@ Credentials from `RWA_USER` / `RWA_PASS` env vars with `||` fallback to public s
 
 **Automation:** covered by `[TC-009] Link a new bank account` in `web/cypress/e2e/rwa/bank.cy.ts`. Implementation helpers live in `RwaBankAccountPage` and `RWAHomePage#openBankAccounts` (`web/cypress/pages/rwa/`). The bank name is generated uniquely with `Test Bank ${Date.now()}` to avoid collisions across test runs.
 
+## 2.11 TC-011 — Feeds filter Mine / Friends / Public correctly
+
+| | |
+|---|---|
+| **Requirement** | REQ-TX-003 |
+| **Priority / Type** | P1 / Functional |
+| **Framework** | Cypress |
+| **Issue** | qa-atelier #14 · Status: automated |
+
+**Preconditions**
+
+- RWA is running at http://localhost:3000
+- Logged in as a seeded user (e.g., Heath93)
+
+**Steps**
+
+1. Log in and navigate to the dashboard
+2. Click each feed tab: Everyone (Public), Friends (Contacts), Mine (Personal)
+
+**Expected result**
+
+- Each tab loads the correct filtered list of transactions:
+  - **Everyone/Public** (`/`): calls `GET /transactions/public` and renders public transactions
+  - **Friends/Contacts** (`/contacts`): calls `GET /transactions/contacts` and renders contact transactions
+  - **Mine/Personal** (`/personal`): calls `GET /transactions` and renders the user's own transactions
+
+**Automation:** covered by `[TC-011] Feeds filter Mine / Friends / Public correctly` in `web/cypress/e2e/rwa/feed.cy.ts`. Helpers live in `RwaTransactionPage`; the spec intercepts each feed endpoint, verifies the route and a non-empty response, and asserts that every returned transaction ID is rendered.
+
 # 3. Planned Test Cases
 
 | ID | Title | Requirement | Type | Priority | Target framework |
 |---|---|---|---|---|---|
 | TC-008 | Session persists across reload | REQ-AUTH-005 | Functional | P1 | Playwright |
 | TC-010 | Bank accounts list shows linked accounts | REQ-BANK-002 | Functional | P1 | Postman / Newman |
-| TC-011 | Feeds filter Mine / Friends / Public correctly | REQ-TX-003 | Functional | P1 | Cypress |
 | TC-012 | Recipient accepts a money request | REQ-TX-004 | Functional | P1 | Cypress |
 | TC-013 | Recipient rejects a money request | REQ-TX-004 | Negative | P2 | Cypress |
 | TC-014 | Payment above balance is rejected | REQ-TX-006 | Negative | P1 | Vitest (API) |
