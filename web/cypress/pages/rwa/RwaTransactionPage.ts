@@ -5,6 +5,25 @@ export class RwaTransactionPage {
     return this;
   }
 
+  clickPublicTab() {
+    cy.getBySel("nav-public-tab").click();
+    return this;
+  }
+
+  clickContactsTab() {
+    cy.getBySel("nav-contacts-tab").click();
+    return this;
+  }
+
+  clickPersonalTab() {
+    cy.getBySel("nav-personal-tab").click();
+    return this;
+  }
+
+  getTransactionItems() {
+    return cy.getBySel("transaction-list").find('[data-test^="transaction-item-"]');
+  }
+
   defineTransaction(amount: string, note: string) {
     cy.getBySel("transaction-create-amount-input").find("input").type(amount);
     cy.getBySel("transaction-create-description-input")
