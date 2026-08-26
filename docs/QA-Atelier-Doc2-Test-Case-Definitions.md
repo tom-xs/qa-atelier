@@ -424,11 +424,43 @@ Credentials from `RWA_USER` / `RWA_PASS` env vars with `||` fallback to public s
 
 **Automation:** covered by collection `api/collections/rwa-bank-accounts.postman_collection.json`, run by `bash api/newman/run-all.sh`.
 
+## 2.16 TC-008 — Session persists across reload
+
+| | |
+|---|---|
+| **Requirement** | REQ-AUTH-005 |
+| **Priority / Type** | P1 / Functional |
+| **Framework** | Playwright |
+| **Issue** | qa-atelier #13 · Status: automated |
+
+**Preconditions**
+
+- RWA is running at http://localhost:3000
+- Seeded user Heath93 exists
+
+**Steps**
+
+1. Open `/signin`
+2. Enter valid credentials and submit
+3. Wait for the dashboard to load
+4. Reload the page
+
+**Expected result**
+
+- After login, the user is redirected to `/` and the authenticated UI is visible (notifications indicator)
+- After reload, the user remains on `/` and the authenticated UI is still visible without re-entering credentials
+
+**Automation:** covered by `[TC-008] session persists across reload` in `web/playwright/tests/rwa/auth.spec.ts`. Playwright's `webServer` config starts RWA automatically when running locally; in CI the same config reuses the started server.
+
 # 3. Planned Test Cases
 
 | ID | Title | Requirement | Type | Priority | Target framework |
 |---|---|---|---|---|---|
-| TC-008 | Session persists across reload | REQ-AUTH-005 | Functional | P1 | Playwright |
+| TC-013 | Recipient rejects a money request | REQ-TX-004 | Negative | P2 | Cypress |
+| TC-015 | Like and comment on a transaction | REQ-TX-005 | Functional | P2 | Cypress |
+| TC-017 | User search returns matching users | REQ-USER-001 | Functional | P2 | Vitest (API) |
+| TC-018 | Update account settings persists | REQ-USER-003 | Functional | P2 | Playwright |
+| TC-020 | Response-time budget: login under 500 ms | REQ-AUTH-001 | Non-functional | P2 | Postman / Newman |
 | TC-013 | Recipient rejects a money request | REQ-TX-004 | Negative | P2 | Cypress |
 | TC-015 | Like and comment on a transaction | REQ-TX-005 | Functional | P2 | Cypress |
 | TC-017 | User search returns matching users | REQ-USER-001 | Functional | P2 | Vitest (API) |
