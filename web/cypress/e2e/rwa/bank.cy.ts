@@ -1,21 +1,15 @@
 import { RwaLoginPage } from "../../pages/rwa/RwaLoginPage";
 import { RWAHomePage } from "../../pages/rwa/RwaHomePage";
 import { RwaBankAccountPage } from "../../pages/rwa/RwaBankAccountPage";
+import { getUserCredentials } from "../../support/rwa-auth";
 
 describe("[REQ-BANK-001] RWA — Bank Account", () => {
   const loginPage = new RwaLoginPage();
   const homePage = new RWAHomePage();
   const bankAccountPage = new RwaBankAccountPage();
 
-  const getCredentials = () => {
-    const username = Cypress.env("RWA_USER") || "Heath93";
-    const password = Cypress.env("RWA_PASS") || "s3cret";
-
-    return { username, password };
-  };
-
   beforeEach(() => {
-    const { username, password } = getCredentials();
+    const { username, password } = getUserCredentials();
     loginPage.login(username, password);
   });
 

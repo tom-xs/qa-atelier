@@ -1,22 +1,9 @@
 import { RwaLoginPage } from "../../pages/rwa/RwaLoginPage";
 import { RWAHomePage } from "../../pages/rwa/RwaHomePage";
+import { getUserCredentials } from "../../support/rwa-auth";
 
-describe("[REQ-AUTH-001, REQ-AUTH-002] RWA — Authentication", () => {
+describe("[REQ-AUTH-001, REQ-AUTH-002, REQ-AUTH-003] RWA — Authentication", () => {
   const loginPage = new RwaLoginPage();
-
-  const getCredentials = () => {
-    const username = Cypress.env("RWA_USER");
-    const password = Cypress.env("RWA_PASS");
-
-    if (typeof username !== "string" || username.length === 0) {
-      throw new Error("CYPRESS_RWA_USER is required to run RWA auth tests.");
-    }
-    if (typeof password !== "string" || password.length === 0) {
-      throw new Error("CYPRESS_RWA_PASS is required to run RWA auth tests.");
-    }
-
-    return { username, password };
-  };
 
   beforeEach(() => {
     loginPage.visit();
@@ -24,7 +11,7 @@ describe("[REQ-AUTH-001, REQ-AUTH-002] RWA — Authentication", () => {
 
   it("[TC-022] logs in with valid credentials via the UI", () => {
     // Arrange
-    const { username, password } = getCredentials();
+    const { username, password } = getUserCredentials();
 
     // Act
     loginPage.login(username, password);
@@ -37,7 +24,7 @@ describe("[REQ-AUTH-001, REQ-AUTH-002] RWA — Authentication", () => {
 
   it("[TC-004] User cannot log in with invalid credentials", () => {
     // Act
-    const { username } = getCredentials();
+    const { username } = getUserCredentials();
     loginPage.login(username, "wrongpassword");
 
     // Assert
@@ -48,7 +35,7 @@ describe("[REQ-AUTH-001, REQ-AUTH-002] RWA — Authentication", () => {
 
   it("[TC-006] log out invalidates the session", () => {
     // Arrange
-    const { username, password } = getCredentials();
+    const { username, password } = getUserCredentials();
 
     // Act
     const homePage = loginPage.login(username, password);
