@@ -88,7 +88,7 @@ Coverage key: **A** = automated (passing spec in CI) · **D** = documented (issu
 | REQ-USER-002 | — | — | Add test case (P2) |
 | REQ-USER-003 | TC-018 | P | Write Playwright spec |
 | REQ-BANK-001 | TC-009 | **A** | — |
-| REQ-BANK-002 | TC-010 | P | Add to Postman collection |
+| REQ-BANK-002 | TC-010 | **A** | — |
 | REQ-BANK-003 | — | — | Add test case (P2) |
 | REQ-TX-001 | TC-002, TC-019 | **A** | — |
 | REQ-TX-002 | TC-003 | **A** | — |
@@ -99,7 +99,7 @@ Coverage key: **A** = automated (passing spec in CI) · **D** = documented (issu
 | REQ-NOTIF-001 | TC-016 | **A** | — |
 | REQ-NOTIF-002 | — | — | Add test case (P2) |
 
-**Coverage summary (2026-08-26):** 19 requirements — 13 with automated coverage (REQ-AUTH-001 through REQ-AUTH-005; REQ-BANK-001 via TC-009; REQ-TX-001 via TC-002 — success alert, feed, and balance deltas all asserted — and TC-019 (API schema contract); REQ-TX-002 via TC-003; REQ-TX-003 via TC-011; REQ-TX-004 partial — accept path via TC-012, reject path TC-013 pending; REQ-TX-006 via TC-014; REQ-NOTIF-001 via TC-016), 3 planned, 3 with no test case yet (all P2). TC-021 and TC-022 were raised retroactively to trace auth UI tests that were already coded in `web/cypress/e2e/rwa/auth.cy.ts`. Incidental exercising does not count as coverage: `transaction.cy.ts` logs in during setup, but REQ-AUTH-001/REQ-TX-003 are only covered by their dedicated cases.
+**Coverage summary (2026-08-26):** 19 requirements — 14 with automated coverage (REQ-AUTH-001 through REQ-AUTH-005; REQ-BANK-001 via TC-009 and REQ-BANK-002 via TC-010; REQ-TX-001 via TC-002 — success alert, feed, and balance deltas all asserted — and TC-019 (API schema contract); REQ-TX-002 via TC-003; REQ-TX-003 via TC-011; REQ-TX-004 partial — accept path via TC-012, reject path TC-013 pending; REQ-TX-006 via TC-014; REQ-NOTIF-001 via TC-016), 2 planned, 3 with no test case yet (all P2). TC-021 and TC-022 were raised retroactively to trace auth UI tests that were already coded in `web/cypress/e2e/rwa/auth.cy.ts`. Incidental exercising does not count as coverage: `transaction.cy.ts` logs in during setup, but REQ-AUTH-001/REQ-TX-003 are only covered by their dedicated cases.
 
 # 4. Maintenance Rules
 
