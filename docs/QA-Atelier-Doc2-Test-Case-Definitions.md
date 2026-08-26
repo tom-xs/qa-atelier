@@ -342,6 +342,32 @@ Credentials from `RWA_USER` / `RWA_PASS` env vars with `||` fallback to public s
 
 **Automation:** covered by `[TC-014] payment above balance triggers bank-transfer withdrawal and completes` in `api/tests/rwa/transaction.test.ts`.
 
+## 2.13 TC-016 — Notification appears for received request
+
+| | |
+|---|---|
+| **Requirement** | REQ-NOTIF-001 |
+| **Priority / Type** | P1 / Functional |
+| **Framework** | Cypress |
+| **Issue** | qa-atelier #16 · Status: automated |
+
+**Preconditions**
+
+- RWA is running at http://localhost:3000
+- Seeded users Heath93 and Dina20 exist
+
+**Steps**
+
+1. Log in as Heath93 and request money from Dina20
+2. Log out and log in as Dina20
+3. Open the notifications panel
+
+**Expected result**
+
+- A notification is visible indicating that Heath93 requested a payment
+
+**Automation:** covered by `[TC-016] Notification appears for received request` in `web/cypress/e2e/rwa/notification.cy.ts`.
+
 # 3. Planned Test Cases
 
 | ID | Title | Requirement | Type | Priority | Target framework |
@@ -350,7 +376,6 @@ Credentials from `RWA_USER` / `RWA_PASS` env vars with `||` fallback to public s
 | TC-010 | Bank accounts list shows linked accounts | REQ-BANK-002 | Functional | P1 | Postman / Newman |
 | TC-013 | Recipient rejects a money request | REQ-TX-004 | Negative | P2 | Cypress |
 | TC-015 | Like and comment on a transaction | REQ-TX-005 | Functional | P2 | Cypress |
-| TC-016 | Notification appears for received request | REQ-NOTIF-001 | Functional | P1 | Cypress |
 | TC-017 | User search returns matching users | REQ-USER-001 | Functional | P2 | Vitest (API) |
 | TC-018 | Update account settings persists | REQ-USER-003 | Functional | P2 | Playwright |
 | TC-019 | API schema contract: `/transactions` response shape | REQ-TX-001 | API Contract | P1 | Postman / Newman |
