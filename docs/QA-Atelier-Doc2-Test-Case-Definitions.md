@@ -70,6 +70,37 @@ docpart: "QA Atelier · Document 2 of 3"
 - The transaction appears in the feed with "requested" status
 - The recipient sees a pending request in their notifications
 
+## 2.2a TC-012 — Recipient accepts a money request
+
+| | |
+|---|---|
+| **Requirement** | REQ-TX-004 |
+| **Priority / Type** | P1 / Functional |
+| **Framework** | Cypress |
+| **Issue** | qa-atelier #15 · Status: automated |
+
+**Preconditions**
+
+- RWA is running at http://localhost:3000
+- Seeded users Heath93 (requester) and Dina20 (recipient) exist
+
+**Steps**
+
+1. Log in as Heath93 and request $100 from Dina20
+2. Log out and log in as Dina20
+3. Open the request transaction detail
+4. Click **Accept Request**
+
+**Expected result**
+
+- The request is accepted and its status changes to a completed payment
+- The request detail no longer shows the **Accept** / **Reject** buttons
+- Dina20's balance decreases by the requested amount
+- Heath93's balance increases by the requested amount
+- The completed payment appears in the transaction feed
+
+**Automation:** covered by `[TC-012] Recipient accepts a money request` in `web/cypress/e2e/rwa/transaction.cy.ts`. The test reuses the request-creation flow from TC-003, captures the transaction id from the feed, opens the detail view as the recipient, clicks `transaction-accept-request-<id>`, asserts the status changed to "charged", and verifies both users' balance deltas after re-logging in.
+
 ## 2.3 TC-004 — User cannot log in with invalid credentials
 
 | | |
@@ -263,7 +294,6 @@ Credentials from `RWA_USER` / `RWA_PASS` env vars with `||` fallback to public s
 | TC-008 | Session persists across reload | REQ-AUTH-005 | Functional | P1 | Playwright |
 | TC-010 | Bank accounts list shows linked accounts | REQ-BANK-002 | Functional | P1 | Postman / Newman |
 | TC-011 | Feeds filter Mine / Friends / Public correctly | REQ-TX-003 | Functional | P1 | Cypress |
-| TC-012 | Recipient accepts a money request | REQ-TX-004 | Functional | P1 | Cypress |
 | TC-013 | Recipient rejects a money request | REQ-TX-004 | Negative | P2 | Cypress |
 | TC-014 | Payment above balance is rejected | REQ-TX-006 | Negative | P1 | Vitest (API) |
 | TC-015 | Like and comment on a transaction | REQ-TX-005 | Functional | P2 | Cypress |
