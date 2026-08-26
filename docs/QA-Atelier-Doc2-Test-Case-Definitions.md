@@ -314,6 +314,34 @@ Credentials from `RWA_USER` / `RWA_PASS` env vars with `||` fallback to public s
 
 **Automation:** covered by `[TC-011] Feeds filter Mine / Friends / Public correctly` in `web/cypress/e2e/rwa/feed.cy.ts`. Helpers live in `RwaTransactionPage`; the spec intercepts each feed endpoint, verifies the route and a non-empty response, and asserts that every returned transaction ID is rendered.
 
+## 2.12 TC-014 — Payment above balance triggers bank-transfer withdrawal
+
+| | |
+|---|---|
+| **Requirement** | REQ-TX-006 |
+| **Priority / Type** | P1 / Negative |
+| **Framework** | Vitest (`api/tests/rwa/transaction.test.ts`) |
+| **Issue** | qa-atelier #20 · Status: automated |
+
+**Preconditions**
+
+- RWA API is running at http://localhost:3001
+- Seeded users Heath93 and Dina20 exist
+
+**Steps**
+
+1. Log in as Heath93 and read the current PayApp balance
+2. `POST /transactions` with `transactionType: payment`, amount greater than the balance, and receiver Dina20
+
+**Expected result**
+
+- The API returns 200 and the transaction status is `complete` (RWA does **not** reject the payment)
+- Heath93's PayApp balance is reset to `0`
+- A `withdrawal` bank transfer is created for the overdraft amount
+- Dina20's balance increases by the full payment amount
+
+**Automation:** covered by `[TC-014] payment above balance triggers bank-transfer withdrawal and completes` in `api/tests/rwa/transaction.test.ts`.
+
 # 3. Planned Test Cases
 
 | ID | Title | Requirement | Type | Priority | Target framework |
@@ -321,7 +349,6 @@ Credentials from `RWA_USER` / `RWA_PASS` env vars with `||` fallback to public s
 | TC-008 | Session persists across reload | REQ-AUTH-005 | Functional | P1 | Playwright |
 | TC-010 | Bank accounts list shows linked accounts | REQ-BANK-002 | Functional | P1 | Postman / Newman |
 | TC-013 | Recipient rejects a money request | REQ-TX-004 | Negative | P2 | Cypress |
-| TC-014 | Payment above balance is rejected | REQ-TX-006 | Negative | P1 | Vitest (API) |
 | TC-015 | Like and comment on a transaction | REQ-TX-005 | Functional | P2 | Cypress |
 | TC-016 | Notification appears for received request | REQ-NOTIF-001 | Functional | P1 | Cypress |
 | TC-017 | User search returns matching users | REQ-USER-001 | Functional | P2 | Vitest (API) |
