@@ -153,7 +153,7 @@ curl -s -X POST http://localhost:3001/login \
 # expected: {"user":{"id":"...","username":"Heath93",...}}
 ```
 
-State management: `yarn start` = reset to seed; `yarn start:empty` = empty database; `yarn db:seed:dev` = re-seed while stopped.
+State management: `yarn start` = reset to seed; `yarn start:empty` = empty database; `yarn db:seed:dev` = re-seed while stopped. The server holds the JSON database in memory, so a reseed only takes effect on restart — reset around a test run, never mid-suite (`make test-cypress-fresh` automates restart + seed + warm-up + run).
 
 ## 5.3 Postman (GUI)
 
@@ -207,6 +207,7 @@ qa-atelier/
 ├── api/                # Postman collections, environments, Newman, Vitest tests
 ├── apps/rwa/           # Cypress Real World App (git submodule)
 ├── docs/               # test plan and test-case docs
+├── scripts/            # local-run helpers (e.g. test-cypress-fresh.sh)
 ├── shared/             # reusable utilities and test data
 ├── web/
 │   ├── cypress/        # Cypress specs + page objects
@@ -355,7 +356,8 @@ bash api/newman/run-all.sh        # Postman collections (skips gracefully)
 cd api && npm test                # Vitest programmatic tests
 
 # Web E2E
-cd web/cypress && npx cypress run
+make test-cypress-fresh           # restart RWA (fresh seed + warm-up), then run Cypress
+cd web/cypress && npx cypress run # assumes RWA already running
 cd web/playwright && npx playwright test
 pytest web/selenium/tests/ -v
 
