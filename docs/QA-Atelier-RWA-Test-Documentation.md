@@ -62,10 +62,15 @@ Test cases are managed as GitHub Issues using the `type: test-case` label and th
 | ID | Title | Requirement | Type | Priority | Framework | Status |
 |---|---|---|---|---|---|---|
 | TC-001 | Log in with valid credentials (UI) | REQ-AUTH-001 | Smoke | P0 | Cypress | Retired — covered by API tests |
-| TC-002 | Create a payment transaction | REQ-TX-001 | Functional | P1 | Cypress | Partially automated (issue #6 — feed assertion in `transaction.cy.ts`) |
-| TC-003 | Request money from another user | REQ-TX-002 | Functional | P1 | Cypress | Documented (issue #7) |
-| TC-004 | User cannot log in with invalid credentials | REQ-AUTH-002 | Smoke / Negative | P0 | Cypress | Partially automated (issue #8 — error-message check in `auth.cy.ts`) |
-| TC-005 | RWA API auth collection + CI environment | REQ-AUTH-001, REQ-AUTH-002 | API Contract | P1 | Postman / Newman | Documented (issue #12) |
+| TC-002 | Create a payment transaction | REQ-TX-001 | Functional | P1 | Cypress | Automated (issue #6, `web/cypress/e2e/rwa/transaction.cy.ts` — alert, feed, balance deltas) |
+| TC-003 | Request money from another user | REQ-TX-002 | Functional | P1 | Cypress | Automated (issue #7, `transaction.cy.ts` — alert, feed, recipient notification) |
+| TC-004 | User cannot log in with invalid credentials | REQ-AUTH-002 | Smoke / Negative | P0 | Cypress | Automated (issue #8, `auth.cy.ts`) |
+| TC-005 | RWA API auth collection + CI environment | REQ-AUTH-001, REQ-AUTH-002 | API Contract | P1 | Postman / Newman | Automated (issue #12, `api/collections/rwa-auth.postman_collection.json`) |
+| TC-006 | Log out invalidates the session | REQ-AUTH-003 | Functional | P1 | Cypress | Automated (issue #18, `auth.cy.ts`) |
+| TC-007 | Sign up creates a new account | REQ-AUTH-004 | Functional | P1 | Cypress | Automated (issue #15, `signup.cy.ts`) |
+| TC-009 | Link a new bank account | REQ-BANK-001 | Functional | P1 | Cypress | Automated (issue #16, `bank.cy.ts`) |
+| TC-011 | Feeds filter Mine / Friends / Public correctly | REQ-TX-003 | Functional | P1 | Cypress | Automated (issue #20, `feed.cy.ts`) |
+| TC-012 | Recipient accepts a money request | REQ-TX-004 | Functional | P1 | Cypress | Automated (issue #24, `transaction.cy.ts`) |
 | TC-021 | Client-side login validation blocks empty submission | REQ-AUTH-001, REQ-AUTH-002 | Functional | P2 | Cypress | Automated (issue #31, `web/cypress/e2e/rwa/auth.cy.ts`) |
 | TC-022 | Log in with valid credentials via the UI | REQ-AUTH-001 | Smoke | P1 | Cypress | Automated (issue #30, `web/cypress/e2e/rwa/auth.cy.ts`) |
 | — | API: login returns user + session cookie; 401 on bad password; cookie grants `/users` | REQ-AUTH-001, REQ-AUTH-002, REQ-AUTH-005 | API Contract | P0 | Vitest | Automated (`api/tests/rwa/auth.test.ts`) |
@@ -74,13 +79,8 @@ Test cases are managed as GitHub Issues using the `type: test-case` label and th
 
 | ID | Title | Requirement | Type | Priority | Target framework |
 |---|---|---|---|---|---|
-| TC-006 | Log out invalidates the session | REQ-AUTH-003 | Functional | P1 | Cypress |
-| TC-007 | Sign up creates a new account | REQ-AUTH-004 | Functional | P1 | Cypress |
 | TC-008 | Session persists across reload | REQ-AUTH-005 | Functional | P1 | Playwright |
-| TC-009 | Link a new bank account | REQ-BANK-001 | Functional | P1 | Cypress |
 | TC-010 | Bank accounts list shows linked accounts | REQ-BANK-002 | Functional | P1 | Postman / Newman |
-| TC-011 | Feeds filter Mine / Friends / Public correctly | REQ-TX-003 | Functional | P1 | Cypress |
-| TC-012 | Recipient accepts a money request | REQ-TX-004 | Functional | P1 | Cypress |
 | TC-013 | Recipient rejects a money request | REQ-TX-004 | Negative | P2 | Cypress |
 | TC-014 | Payment above balance is rejected | REQ-TX-006 | Negative | P1 | Vitest (API) |
 | TC-015 | Like and comment on a transaction | REQ-TX-005 | Functional | P2 | Cypress |
@@ -98,27 +98,27 @@ Coverage key: **A** = automated (passing spec in CI), **D** = documented (issue 
 
 | Requirement | Test cases | Coverage | Gap / next action |
 |---|---|---|---|
-| REQ-AUTH-001 | TC-001 (retired), TC-005, TC-022, Vitest auth suite | **A** | Automate TC-005 collection |
-| REQ-AUTH-002 | TC-004, TC-005, TC-021, Vitest auth suite | **A** | Finish TC-004 UI assertions (stays on /signin, no cookie stored) |
-| REQ-AUTH-003 | TC-006 | P | Write Cypress spec |
-| REQ-AUTH-004 | TC-007 | P | Write Cypress spec |
+| REQ-AUTH-001 | TC-001 (retired), TC-005, TC-022, Vitest auth suite | **A** | — |
+| REQ-AUTH-002 | TC-004, TC-005, TC-021, Vitest auth suite | **A** | — |
+| REQ-AUTH-003 | TC-006 | **A** | — |
+| REQ-AUTH-004 | TC-007 | **A** | — |
 | REQ-AUTH-005 | TC-008, Vitest auth suite (cookie reuse) | **A** (API level) | UI-level check in TC-008 |
 | REQ-USER-001 | TC-017 | P | Write Vitest spec for `/users/search` |
 | REQ-USER-002 | — | — | Add test case (P2) |
 | REQ-USER-003 | TC-018 | P | Write Playwright spec |
-| REQ-BANK-001 | TC-009 | P | Write Cypress spec |
+| REQ-BANK-001 | TC-009 | **A** | — |
 | REQ-BANK-002 | TC-010 | P | Add to Postman collection |
 | REQ-BANK-003 | — | — | Add test case (P2) |
-| REQ-TX-001 | TC-002, TC-019 | **A** (partial) | Extend TC-002 assertions: success alert + balance deltas (feed assertion automated in `transaction.cy.ts`) |
-| REQ-TX-002 | TC-003 | D | Automate TC-003 in Cypress |
-| REQ-TX-003 | TC-011 | P | Write Cypress spec |
-| REQ-TX-004 | TC-012, TC-013 | P | Write Cypress specs |
+| REQ-TX-001 | TC-002, TC-019 | **A** | TC-019 (API schema contract) still planned |
+| REQ-TX-002 | TC-003 | **A** | — |
+| REQ-TX-003 | TC-011 | **A** | — |
+| REQ-TX-004 | TC-012, TC-013 | **A** (partial) | Accept path automated by TC-012 (Cypress); TC-013 (reject path) still pending |
 | REQ-TX-005 | TC-015 | P | Write Cypress spec |
 | REQ-TX-006 | TC-014 | P | Write Vitest spec |
 | REQ-NOTIF-001 | TC-016 | P | Write Cypress spec |
 | REQ-NOTIF-002 | — | — | Add test case (P2) |
 
-**Coverage summary (2026-08-02):** 19 requirements — 4 with automated coverage (REQ-TX-001 partial: feed assertion only, balance/alert checks pending), 1 documented, 11 planned, 3 with no test case yet (all P2). TC-021 and TC-022 were raised retroactively to trace auth UI tests already coded in `web/cypress/e2e/rwa/auth.cy.ts`. Incidental exercising does not count as coverage: `transaction.cy.ts` logs in during setup, but REQ-AUTH-001/REQ-TX-003 are only covered by their dedicated cases. Rule: no requirement ships to "Done" with an **—** in this matrix; P0/P1 rows must reach **A** before the project is considered complete.
+**Coverage summary (2026-08-26):** 19 requirements — 10 with automated coverage (REQ-AUTH-001 through REQ-AUTH-005; REQ-BANK-001 via TC-009; REQ-TX-001 via TC-002 — success alert, feed, and balance deltas all asserted, TC-019 contract test pending; REQ-TX-002 via TC-003; REQ-TX-003 via TC-011; REQ-TX-004 partial — accept path via TC-012, reject path TC-013 pending), 6 planned, 3 with no test case yet (all P2). TC-021 and TC-022 were raised retroactively to trace auth UI tests already coded in `web/cypress/e2e/rwa/auth.cy.ts`. Incidental exercising does not count as coverage: `transaction.cy.ts` logs in during setup, but REQ-AUTH-001/REQ-TX-003 are only covered by their dedicated cases. Rule: no requirement ships to "Done" with an **—** in this matrix; P0/P1 rows must reach **A** before the project is considered complete.
 
 # 5. Environment Setup
 
@@ -153,7 +153,7 @@ curl -s -X POST http://localhost:3001/login \
 # expected: {"user":{"id":"...","username":"Heath93",...}}
 ```
 
-State management: `yarn start` = reset to seed; `yarn start:empty` = empty database; `yarn db:seed:dev` = re-seed while stopped.
+State management: `yarn start` = reset to seed; `yarn start:empty` = empty database; `yarn db:seed:dev` = re-seed while stopped. The server holds the JSON database in memory, so a reseed only takes effect on restart — reset around a test run, never mid-suite (`make test-cypress-fresh` automates restart + seed + warm-up + run).
 
 ## 5.3 Postman (GUI)
 
@@ -194,7 +194,7 @@ Requires RWA running on port 3001. Credentials come from `RWA_USER` / `RWA_PASS`
 
 ## 5.7 GitHub secrets and CI
 
-Repository secrets (Settings → Secrets and variables → Actions): `RWA_USER`, `RWA_PASS`. The workflows pass them as env vars; test code falls back to the public seed credentials when they are absent, but the secrets should stay configured to exercise the intended pattern.
+Repository secrets (Settings → Secrets and variables → Actions): `RWA_USER`, `RWA_PASS`. The workflows pass them as env vars. Cypress specs resolve credentials and config through the shared helper `web/cypress/support/rwa-auth.ts`, which fails fast with a clear error when a required variable is missing (a missing CI secret expands to `""` and must never pass silently); the Vitest suite uses `||` fallbacks to the public seed credentials. Keep the secrets configured to exercise the intended pattern.
 
 # 6. How the Project Operates
 
@@ -207,6 +207,7 @@ qa-atelier/
 ├── api/                # Postman collections, environments, Newman, Vitest tests
 ├── apps/rwa/           # Cypress Real World App (git submodule)
 ├── docs/               # test plan and test-case docs
+├── scripts/            # local-run helpers (e.g. test-cypress-fresh.sh)
 ├── shared/             # reusable utilities and test data
 ├── web/
 │   ├── cypress/        # Cypress specs + page objects
@@ -263,6 +264,7 @@ Exploit the RWA's ephemeral database:
 - **Reset**: restart the server between manual exploratory sessions; never reset mid-suite.
 - **Empty-state testing**: `yarn start:empty` for signup/onboarding scenarios.
 - **RWA `/testData` endpoints**: available in dev mode for injecting specific entities when a scenario needs precise state.
+- **Generated credentials for accounts a test creates**: hardcoding password literals in specs trips secret scanners (GitGuardian flagged one on PR #41) — generate per-run values (e.g. `Test!${Date.now()}`) instead. Public seed credentials (Heath93 / s3cret) may stay hardcoded for existing users.
 
 ## 7.3 Isolation rules
 
@@ -354,7 +356,8 @@ bash api/newman/run-all.sh        # Postman collections (skips gracefully)
 cd api && npm test                # Vitest programmatic tests
 
 # Web E2E
-cd web/cypress && npx cypress run
+make test-cypress-fresh           # restart RWA (fresh seed + warm-up), then run Cypress
+cd web/cypress && npx cypress run # assumes RWA already running
 cd web/playwright && npx playwright test
 pytest web/selenium/tests/ -v
 
