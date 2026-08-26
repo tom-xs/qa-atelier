@@ -62,7 +62,7 @@ Requirements are testable statements with stable IDs. Priorities: **P0** = criti
 | REQ-TX-003 | Transaction feeds are filtered correctly: Mine, Friends, Public | P1 |
 | REQ-TX-004 | The recipient of a money request can accept (creates payment) or reject it | P1 |
 | REQ-TX-005 | A user can like and comment on a transaction | P2 |
-| REQ-TX-006 | A payment exceeding the sender's balance is rejected with an error | P1 |
+| REQ-TX-006 | A payment exceeding the sender's PayApp balance is completed by creating a bank-transfer withdrawal for the overdraft and resetting the sender's PayApp balance to zero | P1 |
 
 ## 2.5 Notifications (REQ-NOTIF)
 
@@ -95,11 +95,11 @@ Coverage key: **A** = automated (passing spec in CI) · **D** = documented (issu
 | REQ-TX-003 | TC-011 | **A** | — |
 | REQ-TX-004 | TC-012, TC-013 | **A** (partial) | Accept path automated by TC-012 (Cypress); TC-013 (reject path) still pending |
 | REQ-TX-005 | TC-015 | P | Write Cypress spec |
-| REQ-TX-006 | TC-014 | P | Write Vitest spec |
+| REQ-TX-006 | TC-014 | **A** | — |
 | REQ-NOTIF-001 | TC-016 | P | Write Cypress spec |
 | REQ-NOTIF-002 | — | — | Add test case (P2) |
 
-**Coverage summary (2026-08-26):** 19 requirements — 10 with automated coverage (REQ-AUTH-001 through REQ-AUTH-005; REQ-BANK-001 via TC-009; REQ-TX-001 via TC-002 — success alert, feed, and balance deltas all asserted, TC-019 contract test pending; REQ-TX-002 via TC-003; REQ-TX-003 via TC-011; REQ-TX-004 partial — accept path via TC-012, reject path TC-013 pending), 6 planned, 3 with no test case yet (all P2). TC-021 and TC-022 were raised retroactively to trace auth UI tests that were already coded in `web/cypress/e2e/rwa/auth.cy.ts`. Incidental exercising does not count as coverage: `transaction.cy.ts` logs in during setup, but REQ-AUTH-001/REQ-TX-003 are only covered by their dedicated cases.
+**Coverage summary (2026-08-26):** 19 requirements — 11 with automated coverage (REQ-AUTH-001 through REQ-AUTH-005; REQ-BANK-001 via TC-009; REQ-TX-001 via TC-002 — success alert, feed, and balance deltas all asserted, TC-019 contract test pending; REQ-TX-002 via TC-003; REQ-TX-003 via TC-011; REQ-TX-004 partial — accept path via TC-012, reject path TC-013 pending; REQ-TX-006 via TC-014), 5 planned, 3 with no test case yet (all P2). TC-021 and TC-022 were raised retroactively to trace auth UI tests that were already coded in `web/cypress/e2e/rwa/auth.cy.ts`. Incidental exercising does not count as coverage: `transaction.cy.ts` logs in during setup, but REQ-AUTH-001/REQ-TX-003 are only covered by their dedicated cases.
 
 # 4. Maintenance Rules
 
