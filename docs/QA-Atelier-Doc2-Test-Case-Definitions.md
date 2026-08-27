@@ -482,11 +482,38 @@ Credentials from `RWA_USER` / `RWA_PASS` env vars with `||` fallback to public s
 
 **Known defect:** the current RWA backend (`updateTransactionById` in `apps/rwa/backend/database.ts`) does not distinguish `accepted` from `rejected` — it completes the payment in both cases. The test therefore validates the UI path and the persisted `requestStatus` rather than balance invariants.
 
+## 2.18 TC-015 — Like and comment on a transaction
+
+| | |
+|---|---|
+| **Requirement** | REQ-TX-005 |
+| **Priority / Type** | P2 / Functional |
+| **Framework** | Cypress |
+| **Issue** | qa-atelier #21 · Status: automated |
+
+**Preconditions**
+
+- RWA is running at http://localhost:3000
+- Seeded user Heath93 exists and the public feed contains at least one transaction
+
+**Steps**
+
+1. Log in as Heath93 and open the dashboard
+2. Click the first transaction in the public feed
+3. Click the like button
+4. Type a comment and press Enter
+
+**Expected result**
+
+- The like count increases by one and the like button becomes disabled
+- The comment appears in the comments list below the transaction
+
+**Automation:** covered by `[TC-015] Like and comment on a transaction` in `web/cypress/e2e/rwa/transaction.cy.ts`.
+
 # 3. Planned Test Cases
 
 | ID | Title | Requirement | Type | Priority | Target framework |
 |---|---|---|---|---|---|
-| TC-015 | Like and comment on a transaction | REQ-TX-005 | Functional | P2 | Cypress |
 | TC-017 | User search returns matching users | REQ-USER-001 | Functional | P2 | Vitest (API) |
 | TC-018 | Update account settings persists | REQ-USER-003 | Functional | P2 | Playwright |
 | TC-020 | Response-time budget: login under 500 ms | REQ-AUTH-001 | Non-functional | P2 | Postman / Newman |
