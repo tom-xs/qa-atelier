@@ -258,4 +258,81 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
       );
     });
   });
+
+  it("[TC-013] Recipient rejects a money request", () => {
+    // KNOWN APP BUG (qa-atelier#45): scoped suppression for the XState init race
+    // on the feed; remove once the app defect is fixed.
+    cy.on("uncaught:exception", (err) => {
+      if (
+        err.message.includes('can\'t access property "length", transactions is undefined')
+      ) {
+        return false;
+      }
+      return true;
+    });
+
+    // Arrange
+    const { username: requesterUsername, password: requesterPassword } =
+      getUserCredentials();
+    const { username: recipientUsername, password: recipientPassword } =
+      getTargetUserCredentials();
+
+    const requestAmount = "100";
+    const displayedAmount = "$100.00";
+    const requestNote = `TC-013 request ${Date.now()}`;
+
+    cy.intercept("GET", `${getApiUrl()}/transactions/public*`).as("publicFeed");
+
+    // Act: requester creates a money request
+    homePage.logout();
+    loginPage.login(requesterUsername, requesterPassword);
+
+    homePage
+      .startTransaction()
+      .selectContact(recipientUsername)
+      .defineTransaction(requestAmount, requestNote)
+      .clickRequestBtn();
+
+    // Assert request creation succeeded
+    cy.getBySel("alert-bar-success").should("be.visible");
+
+    transactionPage.clickReturnToTransactionsBtn();
+    cy.wait("@publicFeed");
+
+    // Assert the pending request appears in the feed and capture its id
+    transactionPage
+      .getTransactionItem(displayedAmount, requestNote)
+      .should("exist")
+      .invoke("attr", "data-test")
+      .then((dataTest) => {
+        const requestId = dataTest?.replace("transaction-item-", "");
+        cy.wrap(requestId).as("requestId");
+      });
+
+    // Act: recipient opens the request and rejects it
+    homePage.logout();
+    loginPage.login(recipientUsername, recipientPassword);
+    cy.location("pathname").should("eq", "/");
+
+    cy.get<string>("@requestId").then((requestId) => {
+      cy.visit(`/transaction/${requestId}`);
+      cy.getBySel("transaction-detail-header").should("be.visible");
+      cy.getBySel(`transaction-reject-request-${requestId}`)
+        .should("be.visible")
+        .click();
+    });
+
+    // Assert the request is no longer pending (action buttons gone)
+    cy.get<string>("@requestId").then((requestId) => {
+      cy.getBySel(`transaction-accept-request-${requestId}`).should("not.exist");
+      cy.getBySel(`transaction-reject-request-${requestId}`).should("not.exist");
+
+      // Verify the backend recorded the rejection
+      cy.request("GET", `${getApiUrl()}/transactions/${requestId}`).then(
+        (response) => {
+          expect(response.body.transaction.requestStatus).to.equal("rejected");
+        }
+      );
+    });
+  });
 });

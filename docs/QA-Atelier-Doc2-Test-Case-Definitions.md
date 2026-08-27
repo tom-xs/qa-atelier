@@ -452,16 +452,40 @@ Credentials from `RWA_USER` / `RWA_PASS` env vars with `||` fallback to public s
 
 **Automation:** covered by `[TC-008] session persists across reload` in `web/playwright/tests/rwa/auth.spec.ts`. Playwright's `webServer` config starts RWA automatically when running locally; in CI the same config reuses the started server.
 
+## 2.17 TC-013 — Recipient rejects a money request
+
+| | |
+|---|---|
+| **Requirement** | REQ-TX-004 |
+| **Priority / Type** | P2 / Negative |
+| **Framework** | Cypress |
+| **Issue** | qa-atelier #19 · Status: automated |
+
+**Preconditions**
+
+- RWA is running at http://localhost:3000
+- Seeded users Heath93 (requester) and Dina20 (recipient) exist
+
+**Steps**
+
+1. Log in as Heath93 and request $100 from Dina20
+2. Log out and log in as Dina20
+3. Open the request transaction detail
+4. Click **Reject Request**
+
+**Expected result**
+
+- The request detail no longer shows the **Accept** / **Reject** buttons
+- The backend records `requestStatus: rejected` for the transaction
+
+**Automation:** covered by `[TC-013] Recipient rejects a money request` in `web/cypress/e2e/rwa/transaction.cy.ts`. The test reuses the request-creation flow from TC-003, captures the transaction id from the feed, opens the detail view as the recipient, clicks `transaction-reject-request-<id>`, asserts the action buttons disappear, and verifies the backend `requestStatus` via `GET /transactions/:id`.
+
+**Known defect:** the current RWA backend (`updateTransactionById` in `apps/rwa/backend/database.ts`) does not distinguish `accepted` from `rejected` — it completes the payment in both cases. The test therefore validates the UI path and the persisted `requestStatus` rather than balance invariants.
+
 # 3. Planned Test Cases
 
 | ID | Title | Requirement | Type | Priority | Target framework |
 |---|---|---|---|---|---|
-| TC-013 | Recipient rejects a money request | REQ-TX-004 | Negative | P2 | Cypress |
-| TC-015 | Like and comment on a transaction | REQ-TX-005 | Functional | P2 | Cypress |
-| TC-017 | User search returns matching users | REQ-USER-001 | Functional | P2 | Vitest (API) |
-| TC-018 | Update account settings persists | REQ-USER-003 | Functional | P2 | Playwright |
-| TC-020 | Response-time budget: login under 500 ms | REQ-AUTH-001 | Non-functional | P2 | Postman / Newman |
-| TC-013 | Recipient rejects a money request | REQ-TX-004 | Negative | P2 | Cypress |
 | TC-015 | Like and comment on a transaction | REQ-TX-005 | Functional | P2 | Cypress |
 | TC-017 | User search returns matching users | REQ-USER-001 | Functional | P2 | Vitest (API) |
 | TC-018 | Update account settings persists | REQ-USER-003 | Functional | P2 | Playwright |
