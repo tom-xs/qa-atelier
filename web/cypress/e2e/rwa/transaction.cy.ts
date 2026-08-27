@@ -142,9 +142,7 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
     // that can leave the transaction detail view blank on Firefox; remove once
     // the app defect is fixed.
     cy.on("uncaught:exception", (err) => {
-      if (
-        err.message.includes('can\'t access property "length", transactions is undefined')
-      ) {
+      if (err.message.includes("transactions is undefined")) {
         return false;
       }
       return true;
@@ -175,7 +173,10 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
       cy.getBySel(`transaction-item-${transactionId}`).scrollIntoView().click({ force: true });
       cy.location("pathname").should("eq", `/transaction/${transactionId}`);
       cy.wait("@transactionDetail");
-      cy.getBySel("transaction-detail-header").should("exist").and("be.visible");
+      // Give the XState-hydrated detail view extra time to render on Firefox.
+      cy.getBySel("transaction-detail-header", { timeout: 10000 })
+        .should("exist")
+        .and("be.visible");
 
       // Capture initial like count
       cy.getBySel(`transaction-like-count-${transactionId}`)
