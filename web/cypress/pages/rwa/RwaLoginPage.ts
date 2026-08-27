@@ -7,11 +7,17 @@ export class RwaLoginPage {
   }
 
   enterUsername(username: string) {
-    cy.getBySel("signin-username").find("input").clear().type(username);
+    cy.getBySel("signin-username")
+      .find("input")
+      .invoke("val", "")
+      .type(username);
   }
 
   enterPassword(password: string) {
-    cy.getBySel("signin-password").find("input").clear().type(password);
+    cy.getBySel("signin-password")
+      .find("input")
+      .invoke("val", "")
+      .type(password);
   }
 
   submit() {
