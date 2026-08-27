@@ -27,7 +27,8 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
       username,
       password,
     }).then((res) => {
-      const setCookie = res.headers["set-cookie"] as string;
+      const raw = res.headers["set-cookie"];
+      const setCookie = Array.isArray(raw) ? raw[0] : (raw as string);
       const cookieValue = setCookie.split(";")[0].replace("connect.sid=", "");
       cy.setCookie("connect.sid", cookieValue);
     });
