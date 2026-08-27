@@ -23,13 +23,20 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
     // regardless of any stale UI state.
     cy.clearCookies();
     const { username, password } = getUserCredentials();
-    // Log in through the UI origin (localhost:3000) so Cypress stores the
-    // session cookie under the same domain used by the browser.
-    cy.request("POST", "/login", {
+    cy.request("POST", `${getApiUrl()}/login`, {
       username,
       password,
     }).then((res) => {
       expect(res.status).to.equal(200);
+      const raw = res.headers["set-cookie"];
+      const setCookie = Array.isArray(raw) ? raw[0] : (raw as string);
+      const cookieValue = setCookie.split(";")[0].replace("connect.sid=", "");
+      // Ensure subsequent cy.visit() sends the session cookie by setting it
+      // for the UI origin (localhost:3000).
+      cy.setCookie("connect.sid", cookieValue, {
+        domain: "localhost",
+        path: "/",
+      });
     });
     cy.visit("/");
     cy.getBySel("nav-top-new-transaction").should("be.visible");
