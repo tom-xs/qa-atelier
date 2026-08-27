@@ -32,9 +32,13 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
       const setCookie = Array.isArray(raw) ? raw[0] : (raw as string);
       const cookieValue = setCookie.split(";")[0].replace("connect.sid=", "");
       // Set the cookie while on the UI origin so Cypress stores it under the
-      // same domain used by cy.visit().
+      // same domain used by cy.visit(). Mark it httpOnly to match the server's
+      // Set-Cookie and ensure the browser sends it on subsequent requests.
       cy.visit("/signin");
-      cy.setCookie("connect.sid", cookieValue);
+      cy.setCookie("connect.sid", cookieValue, {
+        httpOnly: true,
+        path: "/",
+      });
     });
     cy.visit("/");
     cy.getBySel("nav-top-new-transaction").should("be.visible");
