@@ -83,7 +83,7 @@ Coverage key: **A** = automated (passing spec in CI) · **D** = documented (issu
 | REQ-AUTH-002 | TC-004, TC-005, TC-021, Vitest auth suite | **A** | — |
 | REQ-AUTH-003 | TC-006 | **A** | — |
 | REQ-AUTH-004 | TC-007 | **A** | — |
-| REQ-AUTH-005 | TC-008, Vitest auth suite (cookie reuse) | **A** (API level) | UI-level check in TC-008 |
+| REQ-AUTH-005 | TC-008, Vitest auth suite (cookie reuse) | **A** | — |
 | REQ-USER-001 | TC-017 | P | Write Vitest spec for `/users/search` |
 | REQ-USER-002 | — | — | Add test case (P2) |
 | REQ-USER-003 | TC-018 | P | Write Playwright spec |
@@ -99,7 +99,7 @@ Coverage key: **A** = automated (passing spec in CI) · **D** = documented (issu
 | REQ-NOTIF-001 | TC-016 | **A** | — |
 | REQ-NOTIF-002 | — | — | Add test case (P2) |
 
-**Coverage summary (2026-08-26):** 19 requirements — 14 with automated coverage (REQ-AUTH-001 through REQ-AUTH-005; REQ-BANK-001 via TC-009 and REQ-BANK-002 via TC-010; REQ-TX-001 via TC-002 — success alert, feed, and balance deltas all asserted — and TC-019 (API schema contract); REQ-TX-002 via TC-003; REQ-TX-003 via TC-011; REQ-TX-004 partial — accept path via TC-012, reject path TC-013 pending; REQ-TX-006 via TC-014; REQ-NOTIF-001 via TC-016), 2 planned, 3 with no test case yet (all P2). TC-021 and TC-022 were raised retroactively to trace auth UI tests that were already coded in `web/cypress/e2e/rwa/auth.cy.ts`. Incidental exercising does not count as coverage: `transaction.cy.ts` logs in during setup, but REQ-AUTH-001/REQ-TX-003 are only covered by their dedicated cases.
+**Coverage summary (2026-08-26):** 19 requirements — 14 with automated coverage (REQ-AUTH-001 through REQ-AUTH-005 — REQ-AUTH-005 UI-level reload check via TC-008 and API-level cookie reuse via Vitest auth suite; REQ-BANK-001 via TC-009 and REQ-BANK-002 via TC-010; REQ-TX-001 via TC-002 — success alert, feed, and balance deltas all asserted — and TC-019 (API schema contract); REQ-TX-002 via TC-003; REQ-TX-003 via TC-011; REQ-TX-004 partial — accept path via TC-012, reject path TC-013 pending; REQ-TX-006 via TC-014; REQ-NOTIF-001 via TC-016), 3 planned, 3 with no test case yet (all P2). TC-021 and TC-022 were raised retroactively to trace auth UI tests that were already coded in `web/cypress/e2e/rwa/auth.cy.ts`. Incidental exercising does not count as coverage: `transaction.cy.ts` logs in during setup, but REQ-AUTH-001/REQ-TX-003 are only covered by their dedicated cases.
 
 # 4. Maintenance Rules
 
