@@ -510,11 +510,39 @@ Credentials from `RWA_USER` / `RWA_PASS` env vars with `||` fallback to public s
 
 **Automation:** covered by `[TC-015] Like and comment on a transaction` in `web/cypress/e2e/rwa/transaction.cy.ts`.
 
+## 2.19 TC-017 — User search returns matching users
+
+| | |
+|---|---|
+| **Requirement** | REQ-USER-001 |
+| **Priority / Type** | P2 / Functional |
+| **Framework** | Vitest (API) |
+| **Issue** | qa-atelier #22 · Status: automated |
+
+**Preconditions**
+
+- RWA backend is running at http://localhost:3001
+- Seeded users Heath93 and Dina20 exist
+
+**Steps**
+
+1. Log in via `POST /login` to obtain a session cookie
+2. Call `GET /users/search?q=Dina20`
+3. Call `GET /users/search?q=<target-firstName>`
+4. Call `GET /users/search?q=zzzznomatch`
+
+**Expected result**
+
+- Both searches return the target user `Dina20`
+- The authenticated user `Heath93` is never present in search results
+- The no-match search returns an empty array
+
+**Automation:** covered by `[TC-017] user search returns matching users` in `api/tests/rwa/user.test.ts`. The test discovers the target user's actual first name from `GET /users` so it remains robust across different database seeds.
+
 # 3. Planned Test Cases
 
 | ID | Title | Requirement | Type | Priority | Target framework |
 |---|---|---|---|---|---|
-| TC-017 | User search returns matching users | REQ-USER-001 | Functional | P2 | Vitest (API) |
 | TC-018 | Update account settings persists | REQ-USER-003 | Functional | P2 | Playwright |
 | TC-020 | Response-time budget: login under 500 ms | REQ-AUTH-001 | Non-functional | P2 | Postman / Newman |
 
