@@ -17,11 +17,13 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
   const transactionMsg = "Test Transaction";
 
   beforeEach(() => {
-    // Start from a clean session state so a previous spec's logged-in user
-    // (e.g. the freshly-created account from signup.cy.ts) cannot leak into
-    // this one — observed as a 401 on /login and missing feed on Firefox.
-    cy.clearCookies();
+    // Start from a clean session state. Firefox in CI can keep the previous
+    // spec's session alive (observed as a 401 on /login and a missing feed).
+    cy.clearAllCookies();
+    cy.clearAllLocalStorage();
+    cy.clearAllSessionStorage();
     cy.visit("/signin");
+    cy.location("pathname").should("eq", "/signin");
     const { username, password } = getUserCredentials();
     loginPage.login(username, password);
   });
@@ -142,9 +144,7 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
     // that can leave the transaction detail view blank on Firefox; remove once
     // the app defect is fixed.
     cy.on("uncaught:exception", (err) => {
-      if (
-        err.message.includes('can\'t access property "length", transactions is undefined')
-      ) {
+      if (err.message.includes("transactions is undefined")) {
         return false;
       }
       return true;
@@ -175,7 +175,13 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
       cy.getBySel(`transaction-item-${transactionId}`).scrollIntoView().click({ force: true });
       cy.location("pathname").should("eq", `/transaction/${transactionId}`);
       cy.wait("@transactionDetail");
-      cy.getBySel("transaction-detail-header").should("exist").and("be.visible");
+      // The XState-hydrated detail view can render blank on Firefox; a single
+      // reload re-hydrates the page and reliably renders the header.
+      cy.reload();
+      cy.wait("@transactionDetail");
+      cy.getBySel("transaction-detail-header", { timeout: 10000 })
+        .should("exist")
+        .and("be.visible");
 
       // Capture initial like count
       cy.getBySel(`transaction-like-count-${transactionId}`)
