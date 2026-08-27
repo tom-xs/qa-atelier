@@ -17,7 +17,11 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
   const transactionMsg = "Test Transaction";
 
   beforeEach(() => {
-    loginPage.visit();
+    // Start from a clean session state so a previous spec's logged-in user
+    // (e.g. the freshly-created account from signup.cy.ts) cannot leak into
+    // this one — observed as a 401 on /login and missing feed on Firefox.
+    cy.clearCookies();
+    cy.visit("/signin");
     const { username, password } = getUserCredentials();
     loginPage.login(username, password);
   });
@@ -130,6 +134,76 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
       cy.get("@notificationsList")
         .find(`:contains("${requesterName}"):contains("requested payment")`)
         .should("be.visible");
+    });
+  });
+
+  it("[TC-015] Like and comment on a transaction", () => {
+    // KNOWN APP BUG (qa-atelier#45): scoped suppression for the XState init race
+    // that can leave the transaction detail view blank on Firefox; remove once
+    // the app defect is fixed.
+    cy.on("uncaught:exception", (err) => {
+      if (
+        err.message.includes('can\'t access property "length", transactions is undefined')
+      ) {
+        return false;
+      }
+      return true;
+    });
+
+    // Arrange
+    const commentText = `TC-015 comment ${Date.now()}`;
+
+    cy.intercept("GET", `${getApiUrl()}/transactions/public*`).as("publicFeed");
+    cy.intercept("GET", `${getApiUrl()}/transactions/*`).as("transactionDetail");
+    cy.intercept("POST", `${getApiUrl()}/comments/*`).as("postComment");
+
+    // Act: open the first transaction in the public feed
+    cy.visit("/");
+    cy.wait("@publicFeed");
+
+    // Ensure the feed has rendered at least one transaction before interacting
+    cy.getBySel("transaction-list")
+      .find('[data-test^="transaction-item-"]')
+      .should("have.length.at.least", 1)
+      .first()
+      .then(($item) => {
+        const transactionId = $item.attr("data-test")?.replace("transaction-item-", "");
+        cy.wrap(transactionId).as("likedTransactionId");
+      });
+
+    cy.get<string>("@likedTransactionId").then((transactionId) => {
+      cy.getBySel(`transaction-item-${transactionId}`).scrollIntoView().click({ force: true });
+      cy.location("pathname").should("eq", `/transaction/${transactionId}`);
+      cy.wait("@transactionDetail");
+      cy.getBySel("transaction-detail-header").should("exist").and("be.visible");
+
+      // Capture initial like count
+      cy.getBySel(`transaction-like-count-${transactionId}`)
+        .invoke("text")
+        .then((text) => parseInt(text.trim(), 10))
+        .as("initialLikeCount");
+
+      // Act: like the transaction
+      cy.getBySel(`transaction-like-button-${transactionId}`).click();
+
+      // Assert: like count increased and button is disabled
+      cy.get<number>("@initialLikeCount").then((initialLikeCount) => {
+        cy.getBySel(`transaction-like-count-${transactionId}`).should(
+          "contain.text",
+          initialLikeCount + 1
+        );
+      });
+      cy.getBySel(`transaction-like-button-${transactionId}`).should("be.disabled");
+
+      // Act: add a comment
+      cy.getBySel(`transaction-comment-input-${transactionId}`)
+        .type(`${commentText}{enter}`);
+      cy.wait("@postComment");
+
+      // Assert: comment appears in the list
+      cy.getBySel("comments-list")
+        .find("[data-test^='comment-list-item-']")
+        .should("contain.text", commentText);
     });
   });
 
