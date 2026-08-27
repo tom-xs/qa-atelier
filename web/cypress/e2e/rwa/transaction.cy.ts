@@ -18,18 +18,21 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
 
   beforeEach(() => {
     // Start from a clean session state. Firefox in CI can keep the previous
-    // spec's session alive (observed as a 401 on /login and a missing feed),
-    // so terminate any active session server-side before logging in.
-    cy.request({
-      method: "POST",
-      url: `${getApiUrl()}/logout`,
-      failOnStatusCode: false,
-      followRedirect: false,
+    // spec's session alive (observed as a 401 on /login and a missing feed).
+    // Logging in via the API guarantees the session cookie is set correctly
+    // regardless of any stale UI state.
+    cy.clearCookies();
+    const { username, password } = getUserCredentials();
+    cy.request("POST", `${getApiUrl()}/login`, {
+      username,
+      password,
+    }).then((res) => {
+      const setCookie = res.headers["set-cookie"] as string;
+      const cookieValue = setCookie.split(";")[0].replace("connect.sid=", "");
+      cy.setCookie("connect.sid", cookieValue);
     });
     cy.visit("/");
-    cy.location("pathname").should("eq", "/signin");
-    const { username, password } = getUserCredentials();
-    loginPage.login(username, password);
+    cy.getBySel("nav-top-new-transaction").should("be.visible");
   });
 
   it("[TC-002] Create a payment transaction", () => {
