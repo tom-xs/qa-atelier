@@ -19,8 +19,11 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
   beforeEach(() => {
     // Start from a clean session state. Firefox in CI can keep the previous
     // spec's session alive (observed as a 401 on /login and a missing feed).
-    cy.clearCookies();
+    cy.clearAllCookies();
+    cy.clearAllLocalStorage();
+    cy.clearAllSessionStorage();
     cy.visit("/signin");
+    cy.location("pathname").should("eq", "/signin");
     const { username, password } = getUserCredentials();
     loginPage.login(username, password);
   });
