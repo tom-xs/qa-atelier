@@ -19,14 +19,15 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
   beforeEach(() => {
     // Start from a clean session state. Firefox in CI can keep the previous
     // spec's session alive (observed as a 401 on /login and a missing feed),
-    // so log out via the UI when the sign-out control is present.
-    cy.visit("/");
-    cy.get("body").then(($body) => {
-      if ($body.find('[data-test="sidenav-signout"]').length > 0) {
-        cy.getBySel("sidenav-signout").click();
-        cy.location("pathname").should("eq", "/signin");
-      }
+    // so terminate any active session server-side before logging in.
+    cy.request({
+      method: "POST",
+      url: `${getApiUrl()}/logout`,
+      failOnStatusCode: false,
+      followRedirect: false,
     });
+    cy.visit("/");
+    cy.location("pathname").should("eq", "/signin");
     const { username, password } = getUserCredentials();
     loginPage.login(username, password);
   });
