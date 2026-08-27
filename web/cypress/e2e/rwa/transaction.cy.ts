@@ -19,29 +19,10 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
   beforeEach(() => {
     // Start from a clean session state. Firefox in CI can keep the previous
     // spec's session alive (observed as a 401 on /login and a missing feed).
-    // Logging in via the API guarantees the session cookie is set correctly
-    // regardless of any stale UI state.
     cy.clearCookies();
+    cy.visit("/signin");
     const { username, password } = getUserCredentials();
-    cy.request("POST", `${getApiUrl()}/login`, {
-      username,
-      password,
-    }).then((res) => {
-      expect(res.status).to.equal(200);
-      const raw = res.headers["set-cookie"];
-      const setCookie = Array.isArray(raw) ? raw[0] : (raw as string);
-      const cookieValue = setCookie.split(";")[0].replace("connect.sid=", "");
-      // Set the cookie while on the UI origin so Cypress stores it under the
-      // same domain used by cy.visit(). Mark it httpOnly to match the server's
-      // Set-Cookie and ensure the browser sends it on subsequent requests.
-      cy.visit("/signin");
-      cy.setCookie("connect.sid", cookieValue, {
-        httpOnly: true,
-        path: "/",
-      });
-    });
-    cy.visit("/");
-    cy.getBySel("nav-top-new-transaction").should("be.visible");
+    loginPage.login(username, password);
   });
 
   it("[TC-002] Create a payment transaction", () => {
