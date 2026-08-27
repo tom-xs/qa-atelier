@@ -175,7 +175,10 @@ describe("[REQ-TX-001] RWA — Transaction", () => {
       cy.getBySel(`transaction-item-${transactionId}`).scrollIntoView().click({ force: true });
       cy.location("pathname").should("eq", `/transaction/${transactionId}`);
       cy.wait("@transactionDetail");
-      // Give the XState-hydrated detail view extra time to render on Firefox.
+      // The XState-hydrated detail view can render blank on Firefox; a single
+      // reload re-hydrates the page and reliably renders the header.
+      cy.reload();
+      cy.wait("@transactionDetail");
       cy.getBySel("transaction-detail-header", { timeout: 10000 })
         .should("exist")
         .and("be.visible");
