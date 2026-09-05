@@ -1,5 +1,4 @@
 import { RwaLoginPage } from "../../pages/rwa/RwaLoginPage";
-import { RWAHomePage } from "../../pages/rwa/RwaHomePage";
 import { getUserCredentials } from "../../support/rwa-auth";
 
 describe("[REQ-AUTH-001, REQ-AUTH-002, REQ-AUTH-003] RWA — Authentication", () => {

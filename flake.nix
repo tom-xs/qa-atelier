@@ -48,14 +48,9 @@
 
           packages = with pkgs; [
             nodejs_22
-            yarn # add yarn here
-            playwright-driver
+            yarn
 
-            playwright-driver
-            cypress
             pythonEnv
-            chromedriver
-            chromium
             jdk17
             gradle
             android-tools
@@ -66,9 +61,11 @@
           ];
 
           shellHook = ''
-            export PLAYWRIGHT_BROWSERS_PATH="${pkgs.playwright-driver.browsers}"
+            # Browsers (Chromium/Firefox/WebKit/Electron) are installed by
+            # Playwright/Cypress into per-project or ~/.cache paths and use the
+            # host's graphics stack. Do NOT point them at nixpkgs browsers to
+            # avoid Mesa/driver mismatches on non-NixOS distros.
             export PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=true
-            export CYPRESS_RUN_BINARY="${pkgs.cypress}/bin/Cypress"
             export ANDROID_HOME="${androidSdk}/libexec/android-sdk"
             export ANDROID_SDK_ROOT="$ANDROID_HOME"
             export JAVA_HOME="${pkgs.jdk17}"
