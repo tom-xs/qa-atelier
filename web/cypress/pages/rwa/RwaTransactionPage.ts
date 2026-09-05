@@ -1,7 +1,9 @@
 export class RwaTransactionPage {
   selectContact(username: string) {
-    cy.getBySel("user-list-search-input").type(username);
-    cy.getBySelLike("user-list-item-").contains(username).click();
+    // Use force: true because the search input can be covered by the fixed
+    // navbar toolbar in some browsers/viewports.
+    cy.getBySel("user-list-search-input").type(username, { force: true });
+    cy.getBySelLike("user-list-item-").contains(username).click({ force: true });
     return this;
   }
 
@@ -21,7 +23,9 @@ export class RwaTransactionPage {
   }
 
   getTransactionItems() {
-    return cy.getBySel("transaction-list").find('[data-test^="transaction-item-"]');
+    return cy
+      .getBySel("transaction-list", { timeout: 10000 })
+      .find('[data-test^="transaction-item-"]');
   }
 
   defineTransaction(amount: string, note: string) {
@@ -34,7 +38,7 @@ export class RwaTransactionPage {
 
   getTransactionItem(amount: string, note: string) {
     return cy
-      .getBySel("transaction-list")
+      .getBySel("transaction-list", { timeout: 10000 })
       .find('[data-test^="transaction-item-"]')
       .filter(`:contains("${amount}"):contains("${note}")`);
   }

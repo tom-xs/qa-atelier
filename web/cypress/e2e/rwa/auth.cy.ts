@@ -24,7 +24,7 @@ describe("[REQ-AUTH-001, REQ-AUTH-002, REQ-AUTH-003] RWA — Authentication", ()
   it("[TC-004] User cannot log in with invalid credentials", () => {
     // Act
     const { username } = getUserCredentials();
-    loginPage.login(username, "wrongpassword");
+    loginPage.login(username, "wrongpassword", false);
 
     // Assert
     cy.location("href").should("contain", "/signin");
